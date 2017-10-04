@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        items = (ListView) findViewById(R.id.items);
+        items = findViewById(R.id.items);
     }
 
     @Override

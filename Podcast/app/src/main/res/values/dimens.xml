@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="activityMargin">16dp</dimen>
+    <dimen name="listDividerHeight">16dp</dimen>
+    <dimen name="titleSubtitleSpacing">4dp</dimen>
+    <dimen name="listItemPadding">16dp</dimen>
+</resources>

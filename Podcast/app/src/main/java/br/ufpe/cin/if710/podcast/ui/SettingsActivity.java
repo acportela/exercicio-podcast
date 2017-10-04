@@ -31,7 +31,7 @@ public class SettingsActivity extends Activity {
             addPreferencesFromResource(R.xml.preferences);
 
             // pega o valor atual de FeedLink
-            feedLinkPref = (Preference) getPreferenceManager().findPreference(FEED_LINK);
+            feedLinkPref = getPreferenceManager().findPreference(FEED_LINK);
 
             // cria listener para atualizar summary ao modificar link do feed
             mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {

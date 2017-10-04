@@ -57,8 +57,8 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
         if (convertView == null) {
             convertView = View.inflate(getContext(), linkResource, null);
             holder = new ViewHolder();
-            holder.item_title = (TextView) convertView.findViewById(R.id.item_title);
-            holder.item_date = (TextView) convertView.findViewById(R.id.item_date);
+            holder.item_title = convertView.findViewById(R.id.item_title);
+            holder.item_date = convertView.findViewById(R.id.item_date);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
