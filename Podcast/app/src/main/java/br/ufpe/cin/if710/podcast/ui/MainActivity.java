@@ -1,16 +1,18 @@
 package br.ufpe.cin.if710.podcast.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -29,18 +31,19 @@ import br.ufpe.cin.if710.podcast.db.PodcastSQLiteDML;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.domain.XmlFeedParser;
 import br.ufpe.cin.if710.podcast.listeners.PodcastDMLCommandReport;
+import br.ufpe.cin.if710.podcast.listeners.PodcastItemClickListener;
 import br.ufpe.cin.if710.podcast.ui.adapter.XmlFeedAdapter;
 
-public class MainActivity extends Activity implements PodcastDMLCommandReport{
+public class MainActivity extends Activity implements PodcastDMLCommandReport, PodcastItemClickListener {
 
     //ao fazer envio da resolucao, use este link no seu codigo!
     private final String RSS_FEED = "http://leopoldomt.com/if710/fronteirasdaciencia.xml";
     //TODO teste com outros links de podcast
 
     private ListView items;
-    private List<ItemFeed> itemFeeds;
-    private PodcastDBHelper podcastDBHelper;
+    private ItemFeed[] feedItems;
     private AsyncTask task = null;
+    private CursorAdapter cursorAdapter;
     private XmlFeedAdapter adapter;
 
     @Override
@@ -48,7 +51,18 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         items = findViewById(R.id.items);
-        podcastDBHelper = PodcastDBHelper.getInstance(this);
+
+        cursorAdapter =
+                new SimpleCursorAdapter(
+                        this,
+                        R.layout.itemlista,
+                        null,
+                        new String[] { PodcastDBHelper.EPISODE_TITLE, PodcastDBHelper.EPISODE_DATE},
+                        new int[] { R.id.item_title, R.id.item_date},
+                        0
+                );
+        items.setAdapter(cursorAdapter);
+
     }
 
     @Override
@@ -92,10 +106,12 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport{
     }
 
     @Override
-    public void onInsertFinished() {
+    public void onDmlQueryFineshed(Cursor cursor) {
 
     }
 
+
+    //FAZ O DOWNLOAD DO XML DO RSS
     private class DownloadXmlTask extends AsyncTask<String, Void, List<ItemFeed>> {
         @Override
         protected void onPreExecute() {
@@ -119,60 +135,50 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport{
         protected void onPostExecute(List<ItemFeed> feed) {
             Toast.makeText(getApplicationContext(), "terminando...", Toast.LENGTH_SHORT).show();
 
-            xmlFeedDownloadFinished(feed);
 
             //Adapter Personalizado
-             //adapter = new XmlFeedAdapter(getApplicationContext(), R.layout.itemlista, feed);
-
-            //atualizar o list view
+            //TODO MUDAR O XmlFeedAdapter para chamar os métodos de retorno da lista
+            adapter = new XmlFeedAdapter(getApplicationContext(), R.layout.itemlista, feed);
             //items.setAdapter(adapter);
-            //items.setTextFilterEnabled(true);
 
+            xmlFeedDownloadFinished(feed);
 
-            /*
-            items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    XmlFeedAdapter adapter = (XmlFeedAdapter) parent.getAdapter();
-                    ItemFeed item = adapter.getItem(position);
-                    String msg = item.getTitle() + " " + item.getLink();
-                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-                }
-            });
-            /**/
         }
     }
 
-    private class QueryAllTask extends AsyncTask<Void, Void, Cursor> {
-        Cursor doQuery() {
-            Cursor result=
-                    podcastDBHelper.getReadableDatabase()
-                            .query(PodcastDBHelper.DATABASE_TABLE,
-                                    PodcastDBHelper.columns,
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    PodcastDBHelper.EPISODE_DATE);
-
-            result.getCount();
-            return result;
-        }
-
-        @Override
-        protected Cursor doInBackground(Void... params) {
-            return(doQuery());
-        }
-
-        @Override
-        public void onPostExecute(Cursor result) {
-            task = null;
-        }
-    }
-
+    //XML FOI BAIXADO -> REMOVE O QUE TEM NO BD
     private void xmlFeedDownloadFinished(List<ItemFeed> items){
-        ItemFeed[] feed = items.toArray(new ItemFeed[0]);
-        PodcastSQLiteDML.getInstance().insertBatch(podcastDBHelper,this,feed);
+        feedItems = items.toArray(new ItemFeed[0]);
+        PodcastSQLiteDML.getInstance().deletePodcasts(this,this,"1",null);
+    }
+
+    @Override
+    public void onDmlInsertFineshed(Cursor cursor) {
+        cursorAdapter.changeCursor(cursor);
+        //cursorAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDmlDeleteFineshed(Cursor cursor) {
+        PodcastSQLiteDML.getInstance().insertPodcastBatch(this,this,feedItems);
+    }
+
+    //AÇÕES RELATIVAS AO CLICK NO ITEM DA LISTA
+    @Override
+    public void userRequestedPodcastItemAction(String currentTitle, int position) {
+        //Baixar ou Tocar Episódio
+    }
+
+    @Override
+    public void userRequestedEpisodeDetails(int position) {
+        //Abrir EpisodeDetailsActivity
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     //TODO Opcional - pesquise outros meios de obter arquivos da internet

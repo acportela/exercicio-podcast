@@ -1,5 +1,6 @@
 package br.ufpe.cin.if710.podcast.db;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.List;
@@ -12,5 +13,6 @@ import br.ufpe.cin.if710.podcast.listeners.PodcastDMLCommandReport;
  */
 
 public interface PodcastDMLInterface {
-    void insertBatch(SQLiteOpenHelper helper, PodcastDMLCommandReport listener,ItemFeed... itens);
+    void insertPodcastBatch(Context context, PodcastDMLCommandReport listener, ItemFeed... itens);
+    void deletePodcasts(Context context, PodcastDMLCommandReport listener, String where, String[] whereArgs);
 }
