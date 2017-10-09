@@ -9,8 +9,11 @@ import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
+import java.util.List;
+
 import br.ufpe.cin.if710.podcast.R;
 import br.ufpe.cin.if710.podcast.db.PodcastDBHelper;
+import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.listeners.PodcastItemClickListener;
 
 /**
@@ -41,17 +44,20 @@ public class PodcastCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, final Cursor cursor) {
-        TextView title = view.findViewById(R.id.item_title);
-        TextView date = view.findViewById(R.id.item_date);
+        TextView txtViewTitle = view.findViewById(R.id.item_title);
+        TextView txtViewDate = view.findViewById(R.id.item_date);
         final Button action = view.findViewById(R.id.item_action);
 
-        title.setText(cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_TITLE)));
-        date.setText(cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_DATE)));
+        String title = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_TITLE));
+        String date = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_DATE));
         String episodeFileURI = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_FILE_URI));
+
+        txtViewTitle.setText(title);
+        txtViewDate.setText(date);
 
         action.setText(episodeFileURI.isEmpty() ? labelBaixar : labelEscutar);
 
-        title.setOnClickListener(new View.OnClickListener() {
+        txtViewTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 itemClickListener.userRequestedEpisodeDetails(cursor.getPosition());

@@ -81,9 +81,7 @@ public class XmlFeedParser {
                 description = readData(parser, "description");
             }
             else if (name.equals("enclosure")) {
-                //DONE
-                downloadLink = parser.getAttributeValue(0);
-                //downloadLink = readEnclosure(parser);
+                downloadLink = readEnclosure(parser);
                 skip(parser);
             }
             else {
@@ -117,9 +115,12 @@ public class XmlFeedParser {
     public static String readEnclosure(XmlPullParser parser)
             throws IOException, XmlPullParserException {
         //parser.require(XmlPullParser.START_TAG, null, "enclosure");
-        String data = "implementar...";
+
+        return parser.getAttributeValue(0);
+
+        /*String data = "implementar...";
         //parser.require(XmlPullParser.END_TAG, null, "enclosure");
-        return data;
+        return data;*/
     }
 
 

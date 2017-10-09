@@ -1,9 +1,14 @@
 package br.ufpe.cin.if710.podcast.db;
 
+import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.listeners.PodcastDMLCommandReport;
@@ -41,6 +46,13 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
         t.execute(feed);
     }
 
+    //Síncrono
+    @Override
+    public Cursor queryPodcasts(Context context, String where, String[] whereArgs, String sortOrder) {
+        PodcastProvider provider = new PodcastProvider();
+        return provider.query(PodcastProviderContract.EPISODE_LIST_URI,PodcastDBHelper.columns,where,whereArgs,sortOrder);
+    }
+
     //Insere o XML do RSS
     private class InsertBatchTask extends BaseTask<ItemFeed> {
 
@@ -50,6 +62,9 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
 
         @Override
         protected Cursor doInBackground(ItemFeed... itens) {
+
+            PodcastProvider provider = new PodcastProvider();
+
             for (ItemFeed item: itens) {
                 ContentValues cv = new ContentValues();
                 cv.put(PodcastDBHelper.EPISODE_TITLE,item.getTitle());
@@ -58,8 +73,10 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
                 cv.put(PodcastDBHelper.EPISODE_DESC,item.getDescription());
                 cv.put(PodcastDBHelper.EPISODE_DOWNLOAD_LINK,item.getDownloadLink());
                 cv.put(PodcastDBHelper.EPISODE_FILE_URI,"TO BE FOUND");
-                helper.getWritableDatabase().insert(PodcastDBHelper.DATABASE_TABLE,null,cv);
+                //helper.getWritableDatabase().insert(PodcastDBHelper.EPISODE_TABLE,null,cv);
+                provider.insert(PodcastProviderContract.EPISODE_LIST_URI,cv);
             }
+
             return doQuery();
         }
 
@@ -84,7 +101,9 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
         @Override
         protected Cursor doInBackground(ItemFeed... itens) {
             //Coloquei o count só pra verificar a deleção
-            int count = helper.getWritableDatabase().delete(helper.DATABASE_TABLE, where, whereArgs);
+            //int count = helper.getWritableDatabase().delete(helper.EPISODE_TABLE, where, whereArgs);
+            PodcastProvider provider = new PodcastProvider();
+            provider.delete(PodcastProviderContract.EPISODE_LIST_URI,where,whereArgs);
             return(doQuery());
         }
 
@@ -108,18 +127,20 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
         }
 
         Cursor doQuery() {
-            Cursor result=
+
+            PodcastProvider provider = new PodcastProvider();
+            Cursor result = provider.query(PodcastProviderContract.EPISODE_LIST_URI,PodcastDBHelper.columns,null,null,PodcastProviderContract.EPISODE_DATE);
+            /*Cursor result=
                     helper.getReadableDatabase()
-                            .query(PodcastDBHelper.DATABASE_TABLE,
+                            .query(PodcastDBHelper.EPISODE_TABLE,
                                     PodcastDBHelper.columns,
                                     null,
                                     null,
                                     null,
                                     null,
-                                    helper.EPISODE_DATE);
+                                    helper.EPISODE_DATE);*/
 
-
-            result.getCount();
+            int count = result.getCount();
             return result;
         }
 
@@ -128,5 +149,25 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
             listener.onDmlQueryFineshed(result);
             t = null;
         }
+    }
+
+    public static List<ItemFeed> getFeedFromCursor(Cursor cursor){
+
+        List<ItemFeed> itemList = new ArrayList<>();
+
+        while (cursor.moveToNext()){
+
+            String title = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_TITLE));
+            String date = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_DATE));
+            String episodeFileURI = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_FILE_URI));
+            String id = cursor.getString(cursor.getColumnIndex(PodcastDBHelper._ID));
+            String link = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_LINK));
+            String description = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_DESC));
+            String downloadLink = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_DOWNLOAD_LINK));
+
+            itemList.add(new ItemFeed(title,link,date,description,downloadLink,episodeFileURI,id));
+        }
+
+        return itemList;
     }
 }

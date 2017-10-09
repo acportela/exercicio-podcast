@@ -5,18 +5,30 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import br.ufpe.cin.if710.podcast.R;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
+import br.ufpe.cin.if710.podcast.listeners.PodcastItemClickListener;
 
 public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
 
     int linkResource;
+    PodcastItemClickListener listener;
+    List<ItemFeed> feed;
+    private String labelEscutar;
+    private String labelBaixar;
+    private String labelBaixando;
 
-    public XmlFeedAdapter(Context context, int resource, List<ItemFeed> objects) {
+    public XmlFeedAdapter(Context context, int resource, List<ItemFeed> objects, PodcastItemClickListener l) {
         super(context, resource, objects);
         linkResource = resource;
+        feed = objects;
+        listener = l;
+        labelEscutar = context.getString(R.string.action_listen);
+        labelBaixar = context.getString(R.string.action_download);
+        labelBaixando = context.getString(R.string.action_downloading);
     }
 
     /**
@@ -49,22 +61,43 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
     static class ViewHolder {
         TextView item_title;
         TextView item_date;
+        Button button;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final ViewHolder holder;
         if (convertView == null) {
             convertView = View.inflate(getContext(), linkResource, null);
             holder = new ViewHolder();
             holder.item_title = convertView.findViewById(R.id.item_title);
             holder.item_date = convertView.findViewById(R.id.item_date);
+            holder.button = convertView.findViewById(R.id.item_action);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.item_title.setText(getItem(position).getTitle());
         holder.item_date.setText(getItem(position).getPubDate());
+
+        String episodeFileUri = feed.get(position).getFileUri();
+        holder.button.setText( ( episodeFileUri == null || episodeFileUri.isEmpty() ) ? labelBaixar : labelEscutar);
+
+        holder.item_title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.userRequestedEpisodeDetails(position);
+            }
+        });
+        holder.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.userRequestedPodcastItemAction(holder.button.getText().toString(),position);
+            }
+        });
+
+
+
         return convertView;
     }
 }

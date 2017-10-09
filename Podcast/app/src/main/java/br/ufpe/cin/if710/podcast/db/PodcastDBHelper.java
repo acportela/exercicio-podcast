@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class PodcastDBHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "podcasts";
-    public static final String DATABASE_TABLE = "episodes";
+    public static final String EPISODE_TABLE = "episodes";
     private static final int DB_VERSION = 1;
 
     private PodcastDBHelper(Context context) {
@@ -37,7 +37,7 @@ public class PodcastDBHelper extends SQLiteOpenHelper {
             EPISODE_DESC, EPISODE_DOWNLOAD_LINK, EPISODE_FILE_URI
     };
     final private static String CREATE_CMD =
-            "CREATE TABLE "+DATABASE_TABLE+" (" + _ID
+            "CREATE TABLE "+EPISODE_TABLE+" (" + _ID
                     + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + EPISODE_TITLE + " TEXT NOT NULL, "
                     + EPISODE_DATE + " TEXT NOT NULL, "
