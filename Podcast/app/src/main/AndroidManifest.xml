@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -20,6 +21,35 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.SettingsActivity" />
+
+
+        <receiver android:name=".listeners.DownloadFinishedReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="br.ufpe.cin.if710.podcast.action.DownloadHasEnded" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".listeners.FeedWasDownloadedReceiver"
+            android:exported="false"
+            android:enabled="true"
+            >
+            <intent-filter>
+                <action android:name="br.ufpe.cin.if710.podcast.action.FeedWasUpdated" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".services.DownloadPodcastService"
+            android:enabled="true"
+            android:exported="true"/>
+
+        <service
+            android:name=".services.UpdateFeedService"
+            android:enabled="true"
+            android:exported="true"/>
 
         <provider
             android:name=".db.PodcastProvider"

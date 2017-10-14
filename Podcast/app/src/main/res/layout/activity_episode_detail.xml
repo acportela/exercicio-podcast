@@ -1,9 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="br.ufpe.cin.if710.podcast.ui.EpisodeDetailActivity">
 
-</android.support.constraint.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/activityMargin"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_music_note_48dp"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/titleSubtitleSpacing"
+            android:layout_marginLeft="@dimen/activityMargin"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="Ciencia e asdasdasdasd"
+                android:id="@+id/detailTitle"
+                style="@style/DetailTitle"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="Ciencia e asdasdasdasd"
+                style="@style/DetailPubDate"
+                android:id="@+id/detailPubDate"
+                android:layout_height="wrap_content"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="Ciencia e asdasdasdasd"
+                android:id="@+id/detailDesc"
+                style="@style/DetailDesc"
+                android:layout_marginTop="@dimen/listItemPadding"
+                android:layout_height="wrap_content"/>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/layoutEpisodeLink"
+                android:layout_marginTop="@dimen/titleSubtitleSpacing"
+                android:gravity="center_vertical"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_explore_black_24dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/DetailPubDate"
+                    android:id="@+id/detailEpisodeLink"
+                    android:layout_marginLeft="@dimen/listItemPadding"
+                    android:text="http://www.asdasdasd.com.br"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

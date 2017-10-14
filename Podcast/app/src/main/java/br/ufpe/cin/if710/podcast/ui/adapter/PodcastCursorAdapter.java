@@ -44,9 +44,9 @@ public class PodcastCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, final Cursor cursor) {
-        TextView txtViewTitle = view.findViewById(R.id.item_title);
-        TextView txtViewDate = view.findViewById(R.id.item_date);
-        final Button action = view.findViewById(R.id.item_action);
+        TextView txtViewTitle = (TextView) view.findViewById(R.id.item_title);
+        TextView txtViewDate = (TextView) view.findViewById(R.id.item_date);
+        final Button action = (Button) view.findViewById(R.id.item_action);
 
         String title = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_TITLE));
         String date = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_DATE));

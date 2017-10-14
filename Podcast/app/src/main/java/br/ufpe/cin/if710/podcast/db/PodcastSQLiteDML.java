@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
+import br.ufpe.cin.if710.podcast.domain.PodcastApplication;
 import br.ufpe.cin.if710.podcast.listeners.PodcastDMLCommandReport;
 
 /**
@@ -34,9 +35,9 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
     }
 
     @Override
-    public void insertPodcastBatch(Context context, PodcastDMLCommandReport listener, ItemFeed... itens) {
+    public void insertPodcastBatch(Context context, PodcastDMLCommandReport listener, List<ItemFeed> itens) {
         t = new InsertBatchTask(PodcastDBHelper.getInstance(context),listener);
-        t.execute(itens);
+        t.execute(PodcastApplication.podcastListToArray(itens));
     }
 
     @Override

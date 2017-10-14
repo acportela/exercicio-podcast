@@ -3,6 +3,7 @@
     <string name="action_download">baixar</string>
     <string name="action_downloading">baixando...</string>
     <string name="action_listen">escutar</string>
+    <string name="action_downloading_feed">Carregando feed...</string>
     <string name="feed_link">http://leopoldomt.com/if710/fronteirasdaciencia.xml</string>
     <string name="change">Modificar</string>
     <string name="cancel">Cancelar</string>
@@ -11,4 +12,11 @@
     <string name="pref_desc">Link do Feed</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">SettingsActivity</string>
+
+    <string name="detail_title">Episódio:</string>
+    <string name="detail_date">Data:</string>
+    <string name="detail_desc">Descrição</string>
+
+
+
 </resources>

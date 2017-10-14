@@ -11,10 +11,26 @@
         android:divider="@android:color/transparent"
         android:layout_height="match_parent"/>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:indeterminateTint="@color/colorSecondary"/>
+        android:orientation="vertical"
+        android:id="@+id/layoutProgress"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/colorSecondary"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorSecondary"
+            android:layout_marginTop="16dp"
+            android:text="@string/action_downloading_feed"/>
+    </LinearLayout>
+
 </FrameLayout>
