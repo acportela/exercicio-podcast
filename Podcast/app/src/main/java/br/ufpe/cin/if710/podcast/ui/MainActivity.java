@@ -149,11 +149,20 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         }
     }
 
-    //AÇÃO DETALHES
+    //ABRIR TELA DETALHES
     @Override
     public void userRequestedEpisodeDetails(int position) {
-        //Abrir EpisodeDetailsActivity
+
+        ItemFeed pod = PodcastApplication.feedList.get(position);
+        Intent detailsIntent = new Intent(this,EpisodeDetailActivity.class);
+        detailsIntent.putExtra(EpisodeDetailActivity.INTENT_DETAILS_TITLE_KEY,pod.getTitle());
+        detailsIntent.putExtra(EpisodeDetailActivity.INTENT_DETAILS_DATE_KEY,pod.getPubDate());
+        detailsIntent.putExtra(EpisodeDetailActivity.INTENT_DETAILS_DESC_KEY,pod.getDescription());
+        detailsIntent.putExtra(EpisodeDetailActivity.INTENT_DETAILS_LINK_KEY,pod.getLink());
+
+        startActivity(detailsIntent);
     }
+
     //Usado quando não há conexão com a internet
     private Cursor updateViewFromDatabase(){
         Cursor c = PodcastSQLiteDML.getInstance().queryPodcasts(this,"1",null, PodcastProviderContract.EPISODE_DATE);

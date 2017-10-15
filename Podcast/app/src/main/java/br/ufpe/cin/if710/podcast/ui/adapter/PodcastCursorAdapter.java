@@ -63,6 +63,12 @@ public class PodcastCursorAdapter extends CursorAdapter {
                 itemClickListener.userRequestedEpisodeDetails(cursor.getPosition());
             }
         });
+        txtViewDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                itemClickListener.userRequestedEpisodeDetails(cursor.getPosition());
+            }
+        });
 
         action.setOnClickListener(new View.OnClickListener() {
             @Override

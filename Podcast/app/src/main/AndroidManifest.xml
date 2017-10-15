@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".ui.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,7 +45,7 @@
         <service
             android:name=".services.DownloadPodcastService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <service
             android:name=".services.UpdateFeedService"
@@ -57,7 +58,8 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ui.EpisodeDetailActivity"></activity>
+        <activity android:name=".ui.EpisodeDetailActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

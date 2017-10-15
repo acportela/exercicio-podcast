@@ -19,7 +19,7 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
     List<ItemFeed> feed;
     private String labelEscutar;
     private String labelBaixar;
-    private String labelBaixando;
+
 
     public XmlFeedAdapter(Context context, int resource, List<ItemFeed> objects, PodcastItemClickListener l) {
         super(context, resource, objects);
@@ -28,7 +28,6 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
         listener = l;
         labelEscutar = context.getString(R.string.action_listen);
         labelBaixar = context.getString(R.string.action_download);
-        labelBaixando = context.getString(R.string.action_downloading);
     }
 
     /**
@@ -89,14 +88,18 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
                 listener.userRequestedEpisodeDetails(position);
             }
         });
+        holder.item_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.userRequestedEpisodeDetails(position);
+            }
+        });
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.userRequestedPodcastItemAction(holder.button.getText().toString(),position);
             }
         });
-
-
 
         return convertView;
     }

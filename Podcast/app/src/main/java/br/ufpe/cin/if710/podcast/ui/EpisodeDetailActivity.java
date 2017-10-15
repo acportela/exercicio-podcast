@@ -1,6 +1,8 @@
 package br.ufpe.cin.if710.podcast.ui;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -10,11 +12,11 @@ import br.ufpe.cin.if710.podcast.R;
 
 public class EpisodeDetailActivity extends Activity {
 
-    public final String INTENT_DETAILS_TITLE_KEY = "detailTitle";
-    public final String INTENT_DETAILS_DATE_KEY  = "detailDate";
-    public final String INTENT_DETAILS_DESC_KEY  = "detailDesc";
-    public final String INTENT_DETAILS_LINK_KEY  = "detailLink";
-    public final String DEFAULT_VALUE = "";
+    public static final String INTENT_DETAILS_TITLE_KEY = "detailTitle";
+    public static final String INTENT_DETAILS_DATE_KEY  = "detailDate";
+    public static final String INTENT_DETAILS_DESC_KEY  = "detailDesc";
+    public static final String INTENT_DETAILS_LINK_KEY  = "detailLink";
+    public static final String DEFAULT_VALUE = "";
 
     private TextView title;
     private TextView date;
@@ -47,7 +49,9 @@ public class EpisodeDetailActivity extends Activity {
             public void onClick(View v) {
                 String l = link.getText().toString();
                 if(!l.isEmpty()){
-                    //Chamar browser
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(l));
+                    startActivity(i);
                 }
             }
         });
