@@ -5,12 +5,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_headset_black_24dp"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_headset_black_24dp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.MainActivity"
@@ -32,7 +33,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver
+        <!--<receiver
             android:name=".listeners.FeedWasDownloadedReceiver"
             android:exported="false"
             android:enabled="true"
@@ -40,7 +41,7 @@
             <intent-filter>
                 <action android:name="br.ufpe.cin.if710.podcast.action.FeedWasUpdated" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
         <service
             android:name=".services.DownloadPodcastService"
@@ -50,7 +51,11 @@
         <service
             android:name=".services.UpdateFeedService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
+
+       <!-- <service android:name=".ui.MainActivity$DownloadServiceExtension"
+            android:enabled="true"
+            android:exported="false"/>-->
 
         <provider
             android:name=".db.PodcastProvider"
@@ -59,7 +64,7 @@
             android:exported="true" />
 
         <activity android:name=".ui.EpisodeDetailActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

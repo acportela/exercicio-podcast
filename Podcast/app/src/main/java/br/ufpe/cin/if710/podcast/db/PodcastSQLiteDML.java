@@ -1,10 +1,8 @@
 package br.ufpe.cin.if710.podcast.db;
 
-import android.content.ClipData;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
@@ -40,9 +38,16 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
         t.execute(PodcastApplication.podcastListToArray(itens));
     }
 
-    @Override
+    /*@Override
     public void deletePodcasts(Context context, PodcastDMLCommandReport listener,String where, String[] whereArgs) {
         t = new RemoveTask(PodcastDBHelper.getInstance(context),listener,where,whereArgs);
+        ItemFeed[] feed = {new ItemFeed("","","","","")};
+        t.execute(feed);
+    }*/
+
+    @Override
+    public void updatePodcasts(Context context, PodcastDMLCommandReport listener, String selection, String[] selectionArgs, ContentValues cv) {
+        t = new EditaTask(PodcastDBHelper.getInstance(context),listener,selection,selectionArgs,cv);
         ItemFeed[] feed = {new ItemFeed("","","","","")};
         t.execute(feed);
     }
@@ -73,8 +78,7 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
                 cv.put(PodcastDBHelper.EPISODE_LINK,item.getLink());
                 cv.put(PodcastDBHelper.EPISODE_DESC,item.getDescription());
                 cv.put(PodcastDBHelper.EPISODE_DOWNLOAD_LINK,item.getDownloadLink());
-                cv.put(PodcastDBHelper.EPISODE_FILE_URI,"TO BE FOUND");
-                //helper.getWritableDatabase().insert(PodcastDBHelper.EPISODE_TABLE,null,cv);
+                cv.put(PodcastDBHelper.EPISODE_FILE_URI,"");
                 provider.insert(PodcastProviderContract.EPISODE_LIST_URI,cv);
             }
 
@@ -88,33 +92,34 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
         }
     }
 
-    private class RemoveTask extends BaseTask<ItemFeed> {
+    private class EditaTask extends BaseTask<ItemFeed> {
 
-        private String where;
-        private String[] whereArgs;
+        private String selection;
+        private String[] selectionArgs;
+        private ContentValues content;
 
-        public RemoveTask(PodcastDBHelper h, PodcastDMLCommandReport l, String w, String[] wa){
+        public EditaTask(PodcastDBHelper h, PodcastDMLCommandReport l, String s, String[] sa,ContentValues toBeUpdated){
             super(h,l);
-            where = w;
-            whereArgs = wa;
+            selection = s;
+            selectionArgs = sa;
+            content = toBeUpdated;
         }
 
         @Override
         protected Cursor doInBackground(ItemFeed... itens) {
-            //Coloquei o count só pra verificar a deleção
-            //int count = helper.getWritableDatabase().delete(helper.EPISODE_TABLE, where, whereArgs);
+
             PodcastProvider provider = new PodcastProvider();
-            provider.delete(PodcastProviderContract.EPISODE_LIST_URI,where,whereArgs);
-            return(doQuery());
+            provider.update(PodcastProviderContract.EPISODE_LIST_URI,content,selection,selectionArgs);
+
+            return doQuery();
         }
 
         @Override
         public void onPostExecute(Cursor result) {
-            listener.onDmlDeleteFineshed(result);
+            listener.onDmlUpdateFineshed(result);
             t = null;
         }
     }
-
 
     //Todas as DML herdam de BaseTask, para executar o doQuery e atualizar o CursorAdapter
     private abstract class BaseTask<T> extends AsyncTask<T, Void, Cursor> {
@@ -131,17 +136,8 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
 
             PodcastProvider provider = new PodcastProvider();
             Cursor result = provider.query(PodcastProviderContract.EPISODE_LIST_URI,PodcastDBHelper.columns,null,null,PodcastProviderContract.EPISODE_DATE);
-            /*Cursor result=
-                    helper.getReadableDatabase()
-                            .query(PodcastDBHelper.EPISODE_TABLE,
-                                    PodcastDBHelper.columns,
-                                    null,
-                                    null,
-                                    null,
-                                    null,
-                                    helper.EPISODE_DATE);*/
 
-            int count = result.getCount();
+            result.getCount();
             return result;
         }
 
@@ -171,4 +167,31 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
 
         return itemList;
     }
+
+        /*  private class RemoveTask extends BaseTask<ItemFeed> {
+
+        private String where;
+        private String[] whereArgs;
+
+        public RemoveTask(PodcastDBHelper h, PodcastDMLCommandReport l, String w, String[] wa){
+            super(h,l);
+            where = w;
+            whereArgs = wa;
+        }
+
+        @Override
+        protected Cursor doInBackground(ItemFeed... itens) {
+            //Coloquei o count só pra verificar a deleção
+            //int count = helper.getWritableDatabase().delete(helper.EPISODE_TABLE, where, whereArgs);
+            PodcastProvider provider = new PodcastProvider();
+            provider.delete(PodcastProviderContract.EPISODE_LIST_URI,where,whereArgs);
+            return null;
+        }
+
+        @Override
+        public void onPostExecute(Cursor result) {
+            listener.onDmlDeleteFineshed(null);
+            t = null;
+        }
+    }*/
 }

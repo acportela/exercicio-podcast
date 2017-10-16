@@ -116,11 +116,11 @@ public class XmlFeedParser {
             throws IOException, XmlPullParserException {
         //parser.require(XmlPullParser.START_TAG, null, "enclosure");
 
-        return parser.getAttributeValue(0);
+        String attributeValue = parser.getAttributeValue(0);
 
-        /*String data = "implementar...";
+        //String data = "implementar...";
         //parser.require(XmlPullParser.END_TAG, null, "enclosure");
-        return data;*/
+        return attributeValue;
     }
 
 

@@ -2,6 +2,7 @@ package br.ufpe.cin.if710.podcast.domain;
 
 import android.app.Application;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -12,19 +13,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import br.ufpe.cin.if710.podcast.db.PodcastSQLiteDML;
+
 /**
  * Created by acpr on 12/10/17.
  */
 
 public class PodcastApplication extends Application {
 
-    public static List<ItemFeed> feedList;
-    public static boolean shouldUpdateDataBase;
+    public static List<ItemFeed> newfeedList;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        shouldUpdateDataBase = false;
     }
 
     public static boolean isNetworkAvailable(Context context) {
@@ -58,5 +59,9 @@ public class PodcastApplication extends Application {
 
     public static ItemFeed[] podcastListToArray(List<ItemFeed> list){
         return list.toArray(new ItemFeed[0]);
+    }
+
+    public static void updateModelFromCursor(Cursor cursor){
+        newfeedList = PodcastSQLiteDML.getFeedFromCursor(cursor);
     }
 }

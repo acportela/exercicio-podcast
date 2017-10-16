@@ -9,5 +9,6 @@ import android.database.Cursor;
 public interface PodcastDMLCommandReport {
     void onDmlQueryFineshed(Cursor cursor);
     void onDmlInsertFineshed(Cursor cursor);
-    void onDmlDeleteFineshed(Cursor cursor);
+    void onDmlUpdateFineshed(Cursor cursor);
+    //void onDmlDeleteFineshed(Cursor cursor);
 }

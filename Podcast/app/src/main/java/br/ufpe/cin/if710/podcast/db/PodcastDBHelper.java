@@ -41,7 +41,7 @@ public class PodcastDBHelper extends SQLiteOpenHelper {
                     + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + EPISODE_TITLE + " TEXT NOT NULL, "
                     + EPISODE_DATE + " TEXT NOT NULL, "
-                    + EPISODE_LINK + " TEXT NOT NULL, "
+                    + EPISODE_LINK + " TEXT NOT NULL UNIQUE, "
                     + EPISODE_DESC + " TEXT NOT NULL, "
                     + EPISODE_DOWNLOAD_LINK + " TEXT NOT NULL, "
                     + EPISODE_FILE_URI + " TEXT NOT NULL)";
