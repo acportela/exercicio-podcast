@@ -33,9 +33,10 @@
         android:layout_weight="3"
         android:layout_marginLeft="@dimen/activityMargin"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="35dp"
         android:layout_gravity="center_vertical"
         android:gravity="center"
+        style="@style/ItemBtn"
         android:background="@color/colorSecondary"
         android:text="@string/action_download" />
 

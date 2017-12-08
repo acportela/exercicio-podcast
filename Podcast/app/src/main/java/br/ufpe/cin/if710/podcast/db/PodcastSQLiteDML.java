@@ -19,7 +19,7 @@ import br.ufpe.cin.if710.podcast.listeners.PodcastDMLCommandReport;
 public class PodcastSQLiteDML implements PodcastDMLInterface {
 
     private static PodcastSQLiteDML podDML;
-    private AsyncTask t = null;
+    private static AsyncTask t = null;
 
     private PodcastSQLiteDML(){
 
@@ -38,12 +38,12 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
         t.execute(PodcastApplication.podcastListToArray(itens));
     }
 
-    /*@Override
+    @Override
     public void deletePodcasts(Context context, PodcastDMLCommandReport listener,String where, String[] whereArgs) {
         t = new RemoveTask(PodcastDBHelper.getInstance(context),listener,where,whereArgs);
         ItemFeed[] feed = {new ItemFeed("","","","","")};
         t.execute(feed);
-    }*/
+    }
 
     @Override
     public void updatePodcasts(Context context, PodcastDMLCommandReport listener, String selection, String[] selectionArgs, ContentValues cv) {
@@ -60,7 +60,7 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
     }
 
     //Insere o XML do RSS
-    private class InsertBatchTask extends BaseTask<ItemFeed> {
+    private static class InsertBatchTask extends BaseTask<ItemFeed> {
 
         public InsertBatchTask(PodcastDBHelper h, PodcastDMLCommandReport l){
             super(h,l);
@@ -92,7 +92,7 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
         }
     }
 
-    private class EditaTask extends BaseTask<ItemFeed> {
+    private static class EditaTask extends BaseTask<ItemFeed> {
 
         private String selection;
         private String[] selectionArgs;
@@ -121,10 +121,37 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
         }
     }
 
-    //Todas as DML herdam de BaseTask, para executar o doQuery e atualizar o CursorAdapter
-    private abstract class BaseTask<T> extends AsyncTask<T, Void, Cursor> {
+     private static class RemoveTask extends BaseTask<Void> {
 
-        protected PodcastDBHelper helper;
+        private String where;
+        private String[] whereArgs;
+
+        public RemoveTask(PodcastDBHelper h, PodcastDMLCommandReport l, String w, String[] wa){
+            super(h,l);
+            where = w;
+            whereArgs = wa;
+        }
+
+        @Override
+        protected Cursor doInBackground(Void... params) {
+            //Coloquei o count só pra verificar a deleção
+            PodcastProvider provider = new PodcastProvider();
+            int count = provider.delete(PodcastProviderContract.EPISODE_LIST_URI,where,whereArgs);
+            return null;
+
+        }
+
+        @Override
+        public void onPostExecute(Cursor result) {
+            //listener.onDmlDeleteFineshed(null);
+            t = null;
+        }
+    }
+
+    //Todas as DML herdam de BaseTask, para executar o doQuery e atualizar o CursorAdapter
+    private static abstract class BaseTask<T> extends AsyncTask<T, Void, Cursor> {
+
+        private PodcastDBHelper helper;
         protected PodcastDMLCommandReport listener;
 
         public BaseTask(PodcastDBHelper h, PodcastDMLCommandReport l){
@@ -168,30 +195,4 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
         return itemList;
     }
 
-        /*  private class RemoveTask extends BaseTask<ItemFeed> {
-
-        private String where;
-        private String[] whereArgs;
-
-        public RemoveTask(PodcastDBHelper h, PodcastDMLCommandReport l, String w, String[] wa){
-            super(h,l);
-            where = w;
-            whereArgs = wa;
-        }
-
-        @Override
-        protected Cursor doInBackground(ItemFeed... itens) {
-            //Coloquei o count só pra verificar a deleção
-            //int count = helper.getWritableDatabase().delete(helper.EPISODE_TABLE, where, whereArgs);
-            PodcastProvider provider = new PodcastProvider();
-            provider.delete(PodcastProviderContract.EPISODE_LIST_URI,where,whereArgs);
-            return null;
-        }
-
-        @Override
-        public void onPostExecute(Cursor result) {
-            listener.onDmlDeleteFineshed(null);
-            t = null;
-        }
-    }*/
 }

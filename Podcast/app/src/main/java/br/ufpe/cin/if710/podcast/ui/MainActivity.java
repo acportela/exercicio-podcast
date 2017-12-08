@@ -135,12 +135,6 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Permissions.checkPermissionIsGranted(this,Permissions.REQUEST_CODE_JUST_CHECK_AND_ASK);
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         if(xmlAdapter != null) xmlAdapter.clear();
@@ -207,6 +201,8 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
 
     //Chamado pelo receiver do download do podcast
     private void podcastWasDownloaded(){
+        SharedPreferencesUtil.setBooleanOnSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,false,this);
+        currentItemToDownload.setCurrentState(PodcastItemCurrentState.DOWNLOADED);
         updateViewFromList();
     }
 
@@ -293,8 +289,6 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
                     0,
                     myIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
-
-            SharedPreferencesUtil.setBooleanOnSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,false,context);
 
             myNotification = new NotificationCompat.Builder(context)
                     .setContentTitle("Podcast")

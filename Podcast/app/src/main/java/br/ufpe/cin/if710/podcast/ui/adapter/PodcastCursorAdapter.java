@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import br.ufpe.cin.if710.podcast.Extras.PodcastItemCurrentState;
 import br.ufpe.cin.if710.podcast.R;
 import br.ufpe.cin.if710.podcast.db.PodcastDBHelper;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
@@ -27,6 +28,7 @@ public class PodcastCursorAdapter extends CursorAdapter {
     private String labelEscutar;
     private String labelBaixar;
     private String labelBaixando;
+    private String labelEscutando;
 
     public PodcastCursorAdapter(PodcastItemClickListener listener, Context context, Cursor c, LayoutInflater mLayoutInflater) {
         super(context, c);
@@ -35,6 +37,7 @@ public class PodcastCursorAdapter extends CursorAdapter {
         labelEscutar = context.getString(R.string.action_listen);
         labelBaixar = context.getString(R.string.action_download);
         labelBaixando = context.getString(R.string.action_downloading);
+        labelEscutando = context.getString(R.string.action_playing);
     }
 
     @Override
@@ -50,12 +53,15 @@ public class PodcastCursorAdapter extends CursorAdapter {
 
         String title = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_TITLE));
         String date = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_DATE));
+
+        //Ajeitar modelo para refletir todos os estados do podcast
         String episodeFileURI = cursor.getString(cursor.getColumnIndex(PodcastDBHelper.EPISODE_FILE_URI));
 
         txtViewTitle.setText(title);
         txtViewDate.setText(date);
 
         action.setText(episodeFileURI.isEmpty() ? labelBaixar : labelEscutar);
+        final PodcastItemCurrentState state = episodeFileURI.isEmpty() ? PodcastItemCurrentState.INTHECLOUD : PodcastItemCurrentState.DOWNLOADED;
 
         txtViewTitle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +79,7 @@ public class PodcastCursorAdapter extends CursorAdapter {
         action.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                itemClickListener.userRequestedPodcastItemAction(action.getText().toString(),cursor.getPosition());
+                itemClickListener.userRequestedPodcastItemAction(state,cursor.getPosition());
             }
         });
     }

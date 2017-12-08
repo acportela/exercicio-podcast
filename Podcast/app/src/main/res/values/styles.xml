@@ -24,6 +24,9 @@
         <item name="android:textSize">16sp</item>
     </style>
     <style name="ItemDate" parent="DetailPubDate">
+        <item name="android:textSize">11sp</item>
+    </style>
+    <style name="ItemBtn" parent="DetailTitle">
         <item name="android:textSize">12sp</item>
     </style>
 

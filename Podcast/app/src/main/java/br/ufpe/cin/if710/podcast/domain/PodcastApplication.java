@@ -35,6 +35,12 @@ public class PodcastApplication extends Application {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    @Override
+    public void onTerminate() {
+        //PodcastSQLiteDML.getInstance().deletePodcasts(getApplicationContext(),null,"1",null);
+        super.onTerminate();
+    }
+
     public static String getRssFeed(String feed) throws IOException {
         InputStream in = null;
         String rssFeed = "";

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Acpr Podcast</string>
+    <string name="app_name">SciPod</string>
     <string name="action_download">baixar</string>
     <string name="action_downloading">baixando...</string>
     <string name="action_listen">tocar</string>

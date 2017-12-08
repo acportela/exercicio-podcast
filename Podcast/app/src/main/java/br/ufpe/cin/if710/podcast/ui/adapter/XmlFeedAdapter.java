@@ -1,7 +1,11 @@
 package br.ufpe.cin.if710.podcast.ui.adapter;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import android.content.Context;
+import android.os.Environment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -22,7 +26,7 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
     private String labelBaixar;
     private String labelBaixando;
     private String labelEscutando;
-
+    private File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
 
     public XmlFeedAdapter(Context context, int resource, List<ItemFeed> objects, PodcastItemClickListener l) {
         super(context, resource, objects);
@@ -81,13 +85,29 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
         holder.item_title.setText(getItem(position).getTitle());
         holder.item_date.setText(getItem(position).getPubDate());
 
-        //String episodeFileUri = feed.get(position).getFileUri();
-        PodcastItemCurrentState state = feed.get(position).getCurrentState();
+        //Todos os itens iniciam com estado INTHECLOUD
+        //Se já existe um arquivo então o estado é alterado para DOWNLOADED
+        ItemFeed currentItem = feed.get(position);
+        PodcastItemCurrentState itemCurrentState = currentItem.getCurrentState();
 
-        switch (state){
+        if(itemCurrentState == PodcastItemCurrentState.INTHECLOUD){
+            String episodeFileUri = currentItem.getDownloadLink();
+            String[] temp = episodeFileUri.split("/");
+            String fileName = temp[temp.length-1];
+
+            File output = new File(root,fileName);
+            if (output.exists()) {
+                itemCurrentState = PodcastItemCurrentState.DOWNLOADED;
+                currentItem.setCurrentState(itemCurrentState);
+            }
+        }
+
+        //Setando o texto do botão do item de acordo com o estado
+        switch (itemCurrentState){
             case INTHECLOUD:
                 holder.button.setText(labelBaixar);
                 break;
