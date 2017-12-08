@@ -2,7 +2,8 @@
     <string name="app_name">Acpr Podcast</string>
     <string name="action_download">baixar</string>
     <string name="action_downloading">baixando...</string>
-    <string name="action_listen">escutar</string>
+    <string name="action_listen">tocar</string>
+    <string name="action_playing">tocando</string>
     <string name="action_downloading_feed">Carregando feed...</string>
     <string name="feed_link">http://leopoldomt.com/if710/fronteirasdaciencia.xml</string>
     <string name="change">Modificar</string>

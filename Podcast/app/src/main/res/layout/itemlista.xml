@@ -17,14 +17,14 @@
             android:id="@+id/item_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp" />
+            style="@style/ItemTitle" />
 
         <TextView
             android:id="@+id/item_date"
             android:layout_marginTop="@dimen/titleSubtitleSpacing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp" />
+            style="@style/ItemDate" />
 
     </LinearLayout>
 

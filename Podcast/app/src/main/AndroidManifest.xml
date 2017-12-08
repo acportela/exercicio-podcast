@@ -25,14 +25,6 @@
         <activity android:name=".ui.SettingsActivity" />
 
 
-        <receiver android:name=".listeners.DownloadFinishedReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="br.ufpe.cin.if710.podcast.action.DownloadHasEnded" />
-            </intent-filter>
-        </receiver>
-
         <!--<receiver
             android:name=".listeners.FeedWasDownloadedReceiver"
             android:exported="false"

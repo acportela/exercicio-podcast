@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import br.ufpe.cin.if710.podcast.Extras.PodcastItemCurrentState;
 import br.ufpe.cin.if710.podcast.R;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.listeners.PodcastItemClickListener;
@@ -19,6 +20,8 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
     List<ItemFeed> feed;
     private String labelEscutar;
     private String labelBaixar;
+    private String labelBaixando;
+    private String labelEscutando;
 
 
     public XmlFeedAdapter(Context context, int resource, List<ItemFeed> objects, PodcastItemClickListener l) {
@@ -28,6 +31,8 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
         listener = l;
         labelEscutar = context.getString(R.string.action_listen);
         labelBaixar = context.getString(R.string.action_download);
+        labelBaixando = context.getString(R.string.action_downloading);
+        labelEscutando = context.getString(R.string.action_playing);
     }
 
     /**
@@ -79,8 +84,25 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
         holder.item_title.setText(getItem(position).getTitle());
         holder.item_date.setText(getItem(position).getPubDate());
 
-        String episodeFileUri = feed.get(position).getFileUri();
-        holder.button.setText( ( episodeFileUri == null || episodeFileUri.isEmpty() ) ? labelBaixar : labelEscutar);
+        //String episodeFileUri = feed.get(position).getFileUri();
+        PodcastItemCurrentState state = feed.get(position).getCurrentState();
+
+        switch (state){
+            case INTHECLOUD:
+                holder.button.setText(labelBaixar);
+                break;
+            case DOWNLOADING:
+                holder.button.setText(labelBaixando);
+                break;
+            case DOWNLOADED:
+                holder.button.setText(labelEscutar);
+                break;
+            case PLAYING:
+                holder.button.setText(labelEscutando);
+                break;
+        }
+
+        //holder.button.setText( ( episodeFileUri == null || episodeFileUri.isEmpty() ) ? labelBaixar : labelEscutar);
 
         holder.item_title.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,7 +119,7 @@ public class XmlFeedAdapter extends ArrayAdapter<ItemFeed> {
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.userRequestedPodcastItemAction(holder.button.getText().toString(),position);
+                listener.userRequestedPodcastItemAction(feed.get(position).getCurrentState(),position);
             }
         });
 

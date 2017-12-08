@@ -26,7 +26,7 @@ import br.ufpe.cin.if710.podcast.listeners.PodcastDMLCommandReport;
 
 public class DownloadPodcastService extends IntentService implements PodcastDMLCommandReport{
 
-    public final String DOWNLOAD_HAS_ENDED_ACTION = "br.ufpe.cin.if710.podcast.action.DownloadHasEnded";
+    public static final String DOWNLOAD_HAS_ENDED_ACTION = "br.ufpe.cin.if710.podcast.action.DownloadHasEnded";
     private final String UPDATE_SELECTION_CLAUSE = PodcastDBHelper.EPISODE_LINK + " = ?";
     public static final String INTENT_KEY_PAGE_LINK = "link";
     public static final String INTENT_KEY_DOWN_LINK = "downLink";

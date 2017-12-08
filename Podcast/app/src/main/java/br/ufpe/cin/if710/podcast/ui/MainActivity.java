@@ -1,13 +1,19 @@
 package br.ufpe.cin.if710.podcast.ui;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,12 +21,15 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import br.ufpe.cin.if710.podcast.Extras.Constantes;
+import br.ufpe.cin.if710.podcast.Extras.Permissions;
+import br.ufpe.cin.if710.podcast.Extras.PodcastItemCurrentState;
+import br.ufpe.cin.if710.podcast.Extras.SharedPreferencesUtil;
 import br.ufpe.cin.if710.podcast.R;
 import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
 import br.ufpe.cin.if710.podcast.db.PodcastSQLiteDML;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.domain.PodcastApplication;
-import br.ufpe.cin.if710.podcast.listeners.FeedWasDownloadedReceiver;
 import br.ufpe.cin.if710.podcast.listeners.PodcastDMLCommandReport;
 import br.ufpe.cin.if710.podcast.listeners.PodcastItemClickListener;
 import br.ufpe.cin.if710.podcast.services.DownloadPodcastService;
@@ -34,6 +43,8 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
     private XmlFeedAdapter xmlAdapter;
     private LinearLayout layoutProgress;
     private BroadcastReceiver feedReceiver;
+    private DownloadFinishedReceiver downloadFinishedReceiver;
+    private ItemFeed currentItemToDownload;
 
     //FLUXO RESUMIDO
     /*
@@ -68,12 +79,14 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         layoutProgress = (LinearLayout) findViewById(R.id.layoutProgress);
 
         //CRIEI UM RECEIVER PARA ISOLAR O DOWNLOAD DO FEED EM UM SERVICE
-        feedReceiver = new FeedWasDownloadedReceiver(){
+        feedReceiver = new BroadcastReceiver(){
             @Override
             public void onReceive(Context context, Intent intent) {
                 xmlFeedWasDownloaded();
             }
         };
+
+        downloadFinishedReceiver = new DownloadFinishedReceiver();
 
         Toast.makeText(getApplicationContext(), "Infelizmente não estou checando as permissões", Toast.LENGTH_LONG).show();
 
@@ -100,6 +113,7 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         super.onStart();
 
         registerReceiver(feedReceiver,new IntentFilter(UpdateFeedService.ACTION_FEED_UPDATED));
+        registerReceiver(downloadFinishedReceiver,new IntentFilter(DownloadPodcastService.DOWNLOAD_HAS_ENDED_ACTION));
 
         layoutProgress.setVisibility(View.VISIBLE);
 
@@ -108,10 +122,22 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
 
         //Service para baixar o feed
         if(PodcastApplication.isNetworkAvailable(this)){
-            Intent updateFeedIntent = new Intent(getApplicationContext(),UpdateFeedService.class);
-            updateFeedIntent.setData(Uri.parse(RSS_FEED));
-            startService(updateFeedIntent);
+            //Só atualiza a lista se não estiver baixando nada
+            if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,this) == false){
+                Intent updateFeedIntent = new Intent(getApplicationContext(),UpdateFeedService.class);
+                updateFeedIntent.setData(Uri.parse(RSS_FEED));
+                startService(updateFeedIntent);
+            }
         }
+        else {
+            //Aviso sem rede
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Permissions.checkPermissionIsGranted(this,Permissions.REQUEST_CODE_JUST_CHECK_AND_ASK);
     }
 
     @Override
@@ -124,14 +150,6 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
     @Override
     public void onDmlQueryFineshed(Cursor cursor) {
 
-    }
-
-    //Para atualizar a ListView
-    public void updateViewFromList() {
-        if (PodcastApplication.newfeedList != null) {
-            xmlAdapter = new XmlFeedAdapter(getApplicationContext(), R.layout.itemlista, PodcastApplication.newfeedList, this);
-            this.items.setAdapter(xmlAdapter);
-        }
     }
 
     //Retorno do PodcastSQLiteDML para o inserir
@@ -147,19 +165,19 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
 
     ////////////////////////////// AÇÕES RELATIVAS AO CLICK NO ITEM DA LISTA
     @Override
-    public void userRequestedPodcastItemAction(String currentTitle, int position) {
+    public void userRequestedPodcastItemAction(PodcastItemCurrentState currentState, int position) {
         //Baixar ou Tocar Episódio
-        if(currentTitle.equals(this.getString(R.string.action_download))){
+        if(currentState == PodcastItemCurrentState.INTHECLOUD){
             //BAIXAR
-            ItemFeed item = PodcastApplication.newfeedList.get(position);
-            if(item.getDownloadLink() != null){
-                Intent downloadService = new Intent(getApplicationContext(),DownloadPodcastService.class);
-                downloadService.setData(Uri.parse(item.getDownloadLink()));
-                downloadService.putExtra(DownloadPodcastService.INTENT_KEY_PAGE_LINK,item.getLink());
-                downloadService.putExtra(DownloadPodcastService.INTENT_KEY_DOWN_LINK,item.getDownloadLink());
-                startService(downloadService);
-                Toast.makeText(getApplicationContext(), "Baixando, aguarde... (demora um bocado)", Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), "A lista só é atualizada após clicar na notificação", Toast.LENGTH_LONG).show();
+            currentItemToDownload = PodcastApplication.newfeedList.get(position);
+            if(currentItemToDownload.getDownloadLink() != null){
+                //Checa se há permissão para escrita no external storage
+                if(Permissions.checkPermissionIsGranted(this,Permissions.REQUEST_CODE_SAVE_PODCAST_TO_DISK)){
+                    //Checa se já não está baixando um podcast
+                    if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,this) == false){
+                        baixarPodcast();
+                    }
+                }
             }
         }
         else {
@@ -168,9 +186,28 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         }
     }
 
+    private void baixarPodcast(){
+        if(PodcastApplication.isNetworkAvailable(this)){
+            currentItemToDownload.setCurrentState(PodcastItemCurrentState.DOWNLOADING);
+            updateViewFromList();
+            Intent downloadService = new Intent(getApplicationContext(),DownloadPodcastService.class);
+            downloadService.setData(Uri.parse(currentItemToDownload.getDownloadLink()));
+            downloadService.putExtra(DownloadPodcastService.INTENT_KEY_PAGE_LINK,currentItemToDownload.getLink());
+            downloadService.putExtra(DownloadPodcastService.INTENT_KEY_DOWN_LINK,currentItemToDownload.getDownloadLink());
+            SharedPreferencesUtil.setBooleanOnSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,true,this);
+            startService(downloadService);
+            Toast.makeText(getApplicationContext(), "Baixando, aguarde... (demora um bocado)", Toast.LENGTH_LONG).show();
+        }
+    }
+
     //Chamado pelo receiver do download do feed
     private void xmlFeedWasDownloaded(){
         PodcastSQLiteDML.getInstance().insertPodcastBatch(this,this,PodcastApplication.newfeedList);
+    }
+
+    //Chamado pelo receiver do download do podcast
+    private void podcastWasDownloaded(){
+        updateViewFromList();
     }
 
     //ABRIR TELA DETALHES
@@ -184,6 +221,9 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         detailsIntent.putExtra(EpisodeDetailActivity.INTENT_DETAILS_LINK_KEY,pod.getLink());
         startActivity(detailsIntent);
     }
+
+
+    //PARTE PARA ATUALIZAR VIEWS E MODELS
 
     private void updateViewAndModelFromCurrentDatabase(){
         Cursor c = PodcastSQLiteDML.getInstance().queryPodcasts(this,"1",null, PodcastProviderContract.EPISODE_DATE);
@@ -213,6 +253,65 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
             items.setAdapter(cursorAdapter);*/
             updateViewFromList();
             layoutProgress.setVisibility(View.GONE);
+        }
+    }
+
+    //Para atualizar a ListView
+    public void updateViewFromList() {
+        if (PodcastApplication.newfeedList != null) {
+            xmlAdapter = new XmlFeedAdapter(getApplicationContext(), R.layout.itemlista, PodcastApplication.newfeedList, this);
+            this.items.setAdapter(xmlAdapter);
+        }
+    }
+
+
+
+    //TRATA PERMISSÕES
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == Permissions.REQUEST_CODE_SAVE_PODCAST_TO_DISK){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,this) == false){
+                    baixarPodcast();
+                }
+            }
+        }
+    }
+
+    public class DownloadFinishedReceiver extends BroadcastReceiver {
+
+        private static final int MY_NOTIFICATION_ID=2;
+        NotificationManager notificationManager;
+        Notification myNotification;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent myIntent = new Intent(context, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    context,
+                    0,
+                    myIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+
+            SharedPreferencesUtil.setBooleanOnSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,false,context);
+
+            myNotification = new NotificationCompat.Builder(context)
+                    .setContentTitle("Podcast")
+                    .setContentText("Podcast Baixado!")
+                    .setWhen(System.currentTimeMillis())
+                    .setContentIntent(pendingIntent)
+                    .setDefaults(Notification.DEFAULT_SOUND)
+                    .setAutoCancel(true)
+                    .setVibrate(new long[] {0, 1000, 1000, 1000, 1000 })
+                    .setSmallIcon(R.drawable.ic_headset_black_24dp)
+                    .build();
+
+            notificationManager =
+                    (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(MY_NOTIFICATION_ID, myNotification);
+
+            podcastWasDownloaded();
         }
     }
 }

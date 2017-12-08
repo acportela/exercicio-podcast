@@ -1,15 +1,19 @@
 package br.ufpe.cin.if710.podcast.domain;
 
+import br.ufpe.cin.if710.podcast.Extras.PodcastItemCurrentState;
+
 public class ItemFeed {
 
     private final String id;
 
-    private final String title;
-    private final String link;
-    private final String pubDate;
-    private final String description;
-    private final String downloadLink;
-    private final String fileUri;
+    private String title;
+    private String link;
+    private String pubDate;
+    private String description;
+    private String downloadLink;
+    private String fileUri;
+
+    private PodcastItemCurrentState currentState;
 
     public ItemFeed(String title, String link, String pubDate, String description, String downloadLink) {
         this.title = title;
@@ -19,6 +23,7 @@ public class ItemFeed {
         this.downloadLink = downloadLink;
         this.id = null;
         this.fileUri = null;
+        this.currentState = PodcastItemCurrentState.INTHECLOUD;
     }
 
     public ItemFeed(String title, String link, String pubDate, String description, String downloadLink, String fileUri, String id) {
@@ -29,7 +34,9 @@ public class ItemFeed {
         this.downloadLink = downloadLink;
         this.fileUri = fileUri;
         this.id = id;
+        this.currentState = PodcastItemCurrentState.INTHECLOUD;
     }
+
 
 
     public String getTitle() {
@@ -63,5 +70,13 @@ public class ItemFeed {
 
     public String getId() {
         return id;
+    }
+
+    public PodcastItemCurrentState getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(PodcastItemCurrentState currentState) {
+        this.currentState = currentState;
     }
 }
