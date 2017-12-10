@@ -87,7 +87,7 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
                 xmlFeedWasDownloaded();
             }
         };
-
+        //Outro para ser notificado quando o download do podcast acabar
         downloadFinishedReceiver = new DownloadFinishedReceiver();
 
     }

@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
-import br.ufpe.cin.if710.podcast.domain.ItemFeed;
-
 public class PodcastProvider extends ContentProvider {
 
     PodcastDBHelper db;

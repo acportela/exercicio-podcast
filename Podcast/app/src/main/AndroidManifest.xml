@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -14,7 +14,8 @@
         android:roundIcon="@drawable/ic_headset_black_24dp"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.MainActivity"
+        <activity
+            android:name=".ui.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,8 +25,8 @@
         </activity>
         <activity android:name=".ui.SettingsActivity" />
 
-
-        <!--<receiver
+        <!--
+        <receiver
             android:name=".listeners.FeedWasDownloadedReceiver"
             android:exported="false"
             android:enabled="true"
@@ -33,21 +34,23 @@
             <intent-filter>
                 <action android:name="br.ufpe.cin.if710.podcast.action.FeedWasUpdated" />
             </intent-filter>
-        </receiver>-->
+        </receiver>
+        -->
 
         <service
             android:name=".services.DownloadPodcastService"
             android:enabled="true"
-            android:exported="false"/>
-
+            android:exported="false" />
         <service
             android:name=".services.UpdateFeedService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
-       <!-- <service android:name=".ui.MainActivity$DownloadServiceExtension"
+        <!--
+            <service android:name=".ui.MainActivity$DownloadServiceExtension"
             android:enabled="true"
-            android:exported="false"/>-->
+            android:exported="false"/>
+        -->
 
         <provider
             android:name=".db.PodcastProvider"
@@ -55,8 +58,10 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".ui.EpisodeDetailActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.EpisodeDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.Main2Activity"></activity>
     </application>
 
 </manifest>
