@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.view.Menu;
@@ -22,6 +23,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import br.ufpe.cin.if710.podcast.Extras.Constantes;
+import br.ufpe.cin.if710.podcast.Extras.FileUtils;
 import br.ufpe.cin.if710.podcast.Extras.Permissions;
 import br.ufpe.cin.if710.podcast.Extras.PodcastItemCurrentState;
 import br.ufpe.cin.if710.podcast.Extras.SharedPreferencesUtil;
@@ -88,8 +90,6 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
 
         downloadFinishedReceiver = new DownloadFinishedReceiver();
 
-        Toast.makeText(getApplicationContext(), "Infelizmente não estou checando as permissões", Toast.LENGTH_LONG).show();
-
     }
 
     @Override
@@ -105,6 +105,11 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         if (id == R.id.action_settings) {
             startActivity(new Intent(this,SettingsActivity.class));
         }
+        else if(id == R.id.action_delete_all_data){
+            PodcastSQLiteDML.getInstance().deletePodcasts(getApplicationContext(),null,"1",null);
+            FileUtils.deleteAllFilesFromPuclicDirectory(Environment.DIRECTORY_PODCASTS);
+            baixarFeed();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -119,19 +124,8 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
 
         //Preencho a lista com o conteúdo da base
         updateViewAndModelFromCurrentDatabase();
-
-        //Service para baixar o feed
-        if(PodcastApplication.isNetworkAvailable(this)){
-            //Só atualiza a lista se não estiver baixando nada
-            if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,this) == false){
-                Intent updateFeedIntent = new Intent(getApplicationContext(),UpdateFeedService.class);
-                updateFeedIntent.setData(Uri.parse(RSS_FEED));
-                startService(updateFeedIntent);
-            }
-        }
-        else {
-            //Aviso sem rede
-        }
+        //Tento baixar o feed
+        baixarFeed();
     }
 
     @Override
@@ -139,6 +133,7 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         super.onStop();
         if(xmlAdapter != null) xmlAdapter.clear();
         unregisterReceiver(feedReceiver);
+        unregisterReceiver(downloadFinishedReceiver);
     }
 
     @Override
@@ -177,6 +172,21 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         else {
             //TOCAR
             // Faltando
+        }
+    }
+
+    private void baixarFeed(){
+        //Service para baixar o feed
+        if(PodcastApplication.isNetworkAvailable(this)){
+            //Só atualiza a lista se não estiver baixando nada
+            if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,this) == false){
+                Intent updateFeedIntent = new Intent(getApplicationContext(),UpdateFeedService.class);
+                updateFeedIntent.setData(Uri.parse(RSS_FEED));
+                startService(updateFeedIntent);
+            }
+        }
+        else {
+            //Aviso sem rede
         }
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import br.ufpe.cin.if710.podcast.Extras.FileUtils;
 import br.ufpe.cin.if710.podcast.db.PodcastSQLiteDML;
 
 /**
@@ -33,12 +35,6 @@ public class PodcastApplication extends Application {
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    @Override
-    public void onTerminate() {
-        //PodcastSQLiteDML.getInstance().deletePodcasts(getApplicationContext(),null,"1",null);
-        super.onTerminate();
     }
 
     public static String getRssFeed(String feed) throws IOException {

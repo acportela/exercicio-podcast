@@ -121,7 +121,7 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
         }
     }
 
-     private static class RemoveTask extends BaseTask<Void> {
+     private static class RemoveTask extends BaseTask<ItemFeed> {
 
         private String where;
         private String[] whereArgs;
@@ -133,7 +133,7 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
         }
 
         @Override
-        protected Cursor doInBackground(Void... params) {
+        protected Cursor doInBackground(ItemFeed... params) {
             //Coloquei o count só pra verificar a deleção
             PodcastProvider provider = new PodcastProvider();
             int count = provider.delete(PodcastProviderContract.EPISODE_LIST_URI,where,whereArgs);
@@ -143,7 +143,6 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
 
         @Override
         public void onPostExecute(Cursor result) {
-            //listener.onDmlDeleteFineshed(null);
             t = null;
         }
     }
