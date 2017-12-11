@@ -15,7 +15,7 @@ import br.ufpe.cin.if710.podcast.listeners.PodcastDMLCommandReport;
  */
 
 public interface PodcastDMLInterface {
-    void insertPodcastBatch(Context context, PodcastDMLCommandReport listener, List<ItemFeed> itens);
+    void insertPodcastBatch(Context context, PodcastDMLCommandReport listener, List<ItemFeed> itens, boolean shouldBulkInsert);
     void deletePodcasts(Context context, PodcastDMLCommandReport listener, String where, String[] whereArgs);
     void updatePodcasts(Context context, PodcastDMLCommandReport listener, String selection, String[] selectionArgs, ContentValues cv);
     Cursor queryPodcasts(Context context, String where, String[] whereArgs, String sortOrder);

@@ -206,7 +206,7 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
 
     //Chamado pelo receiver do download do feed
     private void xmlFeedWasDownloaded(){
-        PodcastSQLiteDML.getInstance().insertPodcastBatch(this,this,PodcastApplication.newfeedList);
+        PodcastSQLiteDML.getInstance().insertPodcastBatch(this,this,PodcastApplication.newfeedList,false);
     }
 
     //Chamado pelo receiver do download do podcast

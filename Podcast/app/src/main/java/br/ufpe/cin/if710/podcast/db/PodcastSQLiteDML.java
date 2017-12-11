@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.CountDownTimer;
+import android.os.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +35,8 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
     }
 
     @Override
-    public void insertPodcastBatch(Context context, PodcastDMLCommandReport listener, List<ItemFeed> itens) {
-        t = new InsertBatchTask(PodcastDBHelper.getInstance(context),listener);
+    public void insertPodcastBatch(Context context, PodcastDMLCommandReport listener, List<ItemFeed> itens, boolean shouldBulkInsert) {
+        t = new InsertBatchTask(PodcastDBHelper.getInstance(context),listener,shouldBulkInsert);
         t.execute(PodcastApplication.podcastListToArray(itens));
     }
 
@@ -62,8 +64,11 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
     //Insere o XML do RSS
     private static class InsertBatchTask extends BaseTask<ItemFeed> {
 
-        public InsertBatchTask(PodcastDBHelper h, PodcastDMLCommandReport l){
+        private boolean bulkInsert;
+
+        public InsertBatchTask(PodcastDBHelper h, PodcastDMLCommandReport l, boolean bulkInsert){
             super(h,l);
+            this.bulkInsert = bulkInsert;
         }
 
         @Override
@@ -71,15 +76,29 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
 
             PodcastProvider provider = new PodcastProvider();
 
-            for (ItemFeed item: itens) {
+            ContentValues[] values = new ContentValues[itens.length];
+
+            for (int i = 0; i < itens.length; i++) {
                 ContentValues cv = new ContentValues();
-                cv.put(PodcastDBHelper.EPISODE_TITLE,item.getTitle());
-                cv.put(PodcastDBHelper.EPISODE_DATE,item.getPubDate());
-                cv.put(PodcastDBHelper.EPISODE_LINK,item.getLink());
-                cv.put(PodcastDBHelper.EPISODE_DESC,item.getDescription());
-                cv.put(PodcastDBHelper.EPISODE_DOWNLOAD_LINK,item.getDownloadLink());
+                cv.put(PodcastDBHelper.EPISODE_TITLE,itens[i].getTitle());
+                cv.put(PodcastDBHelper.EPISODE_DATE,itens[i].getPubDate());
+                cv.put(PodcastDBHelper.EPISODE_LINK,itens[i].getLink());
+                cv.put(PodcastDBHelper.EPISODE_DESC,itens[i].getDescription());
+                cv.put(PodcastDBHelper.EPISODE_DOWNLOAD_LINK,itens[i].getDownloadLink());
                 cv.put(PodcastDBHelper.EPISODE_FILE_URI,"");
-                provider.insert(PodcastProviderContract.EPISODE_LIST_URI,cv);
+                values[i] = cv;
+            }
+            if(bulkInsert){
+                Debug.startMethodTracing("bulkInsertTest4");
+                provider.bulkInsert(PodcastProviderContract.EPISODE_LIST_URI,values);
+                Debug.stopMethodTracing();
+            }
+            else {
+                Debug.startMethodTracing("normalInsert4");
+                for(ContentValues cv : values){
+                    provider.insert(PodcastProviderContract.EPISODE_LIST_URI,cv);
+                }
+                Debug.stopMethodTracing();
             }
 
             return doQuery();

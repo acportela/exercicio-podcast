@@ -15,10 +15,11 @@ public class FileUtils {
         root.mkdir();
         if(root.exists()){
             File[] files = root.listFiles();
-            for(File file: files)
-                if (!file.isDirectory())
-                    file.delete();
+            if(files.length != 0){
+                for(File file: files)
+                    if (!file.isDirectory())
+                        file.delete();
+            }
         }
     }
-
 }
