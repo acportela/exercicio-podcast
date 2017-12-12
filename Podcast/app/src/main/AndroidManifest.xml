@@ -11,6 +11,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_headset_black_24dp"
         android:label="@string/app_name"
+        android:name=".domain.PodcastApplication"
         android:roundIcon="@drawable/ic_headset_black_24dp"
         android:supportsRtl="true"
         android:hardwareAccelerated="true"

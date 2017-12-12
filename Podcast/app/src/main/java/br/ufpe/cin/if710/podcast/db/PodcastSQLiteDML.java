@@ -89,19 +89,23 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
                 values[i] = cv;
             }
             if(bulkInsert){
-                Debug.startMethodTracing("bulkInsertTest4");
+                //Debug.startMethodTracing("bulkInsertTest4");
                 provider.bulkInsert(PodcastProviderContract.EPISODE_LIST_URI,values);
-                Debug.stopMethodTracing();
+                //Debug.stopMethodTracing();
             }
             else {
-                Debug.startMethodTracing("normalInsert4");
-                for(ContentValues cv : values){
-                    provider.insert(PodcastProviderContract.EPISODE_LIST_URI,cv);
-                }
-                Debug.stopMethodTracing();
+                //Debug.startMethodTracingSampling("regularInsertSampling2",1024*1024*512,5000);
+                regularInsert(values,provider);
+                //Debug.stopMethodTracing();
             }
 
             return doQuery();
+        }
+
+        private void regularInsert(ContentValues[] values, PodcastProvider provider){
+            for(ContentValues cv : values){
+                provider.insert(PodcastProviderContract.EPISODE_LIST_URI,cv);
+            }
         }
 
         @Override

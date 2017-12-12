@@ -22,6 +22,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.frogermcs.androiddevmetrics.internal.MethodsTracingManager;
+import com.squareup.leakcanary.RefWatcher;
+
 import br.ufpe.cin.if710.podcast.Extras.Constantes;
 import br.ufpe.cin.if710.podcast.Extras.FileUtils;
 import br.ufpe.cin.if710.podcast.Extras.Permissions;
@@ -73,6 +76,7 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
     * chama o PodcastProvider no doInBackground
      */
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +111,7 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         }
         else if(id == R.id.action_delete_all_data){
             PodcastSQLiteDML.getInstance().deletePodcasts(getApplicationContext(),null,"1",null);
-            FileUtils.deleteAllFilesFromPuclicDirectory(Environment.DIRECTORY_PODCASTS);
+            FileUtils.deleteAllFilesFromPuclicDirectory(Environment.DIRECTORY_PODCASTS,this);
             baixarFeed();
         }
         return super.onOptionsItemSelected(item);
@@ -206,7 +210,7 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
 
     //Chamado pelo receiver do download do feed
     private void xmlFeedWasDownloaded(){
-        PodcastSQLiteDML.getInstance().insertPodcastBatch(this,this,PodcastApplication.newfeedList,false);
+        PodcastSQLiteDML.getInstance().insertPodcastBatch(this,this,PodcastApplication.newfeedList,true);
     }
 
     //Chamado pelo receiver do download do podcast
@@ -301,7 +305,7 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             myNotification = new NotificationCompat.Builder(context)
-                    .setContentTitle("Podcast")
+                    .setContentTitle("SciPod")
                     .setContentText("Podcast Baixado!")
                     .setWhen(System.currentTimeMillis())
                     .setContentIntent(pendingIntent)
