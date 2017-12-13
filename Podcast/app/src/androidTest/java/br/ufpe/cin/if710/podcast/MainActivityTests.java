@@ -18,9 +18,8 @@ import org.junit.runner.RunWith;
 import br.ufpe.cin.if710.podcast.ui.MainActivity;
 
 import static android.content.ContentValues.TAG;
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onData;
+import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.anything;
@@ -37,9 +36,8 @@ public class MainActivityTests {
     @Before
     public void setup() throws InterruptedException {
 
-        //Gambiarra para prover a permissão pela shell
-        //Deixei aqui só por conhecimento
-        //Há ma melhor alternativa mais abaixo
+        //Add a permissão pelo adb. Deixei aqui só por conhecimento
+        //Há uma melhor alternativa mais abaixo
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getInstrumentation().getUiAutomation().executeShellCommand(
                     "pm grant " + getTargetContext().getPackageName()
@@ -60,10 +58,12 @@ public class MainActivityTests {
         allowPermissionsIfNeeded();
     }
 
-    //Testa o click no item para abrir a activity de detalhes
+    //Testa o click no item para abrir a activity de detalhes e depois abrir o link
     @Test
-    public void itemClickOpenDetaisTest(){
+    public void itemClickOpenDetaisTest() throws InterruptedException{
         onData(anything()).inAdapterView(withId(R.id.items)).atPosition(0).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.detailEpisodeLink)).perform(click());
     }
 
     //Só funciona para locale EN devido ao nome do botão
