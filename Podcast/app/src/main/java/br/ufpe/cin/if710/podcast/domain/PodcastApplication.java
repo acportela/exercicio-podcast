@@ -118,7 +118,7 @@ public class PodcastApplication extends Application {
         ComponentName serviceComponent = new ComponentName(context, DownloadFeedJob.class);
 
         JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent);
-        //30 minutos
+        //Mudar para 30 minutos
         builder.setPeriodic(1000*60*30); //No Nougat só de 15 em 15 minutos
 
         //Algumas opções

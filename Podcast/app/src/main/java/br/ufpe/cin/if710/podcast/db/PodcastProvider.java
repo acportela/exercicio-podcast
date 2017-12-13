@@ -1,5 +1,7 @@
 package br.ufpe.cin.if710.podcast.db;
 
+import android.app.ActivityManager;
+import android.app.Application;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -7,10 +9,13 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityManagerCompat;
+
+import br.ufpe.cin.if710.podcast.domain.PodcastApplication;
 
 public class PodcastProvider extends ContentProvider {
 
-    PodcastDBHelper db;
+    private PodcastDBHelper db;
 
     public PodcastProvider() {
     }
@@ -94,5 +99,4 @@ public class PodcastProvider extends ContentProvider {
     private boolean isPodcastFeedUri(Uri uri) {
         return uri.getLastPathSegment().equals(PodcastProviderContract.EPISODE_TABLE);
     }
-
 }

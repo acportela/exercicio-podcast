@@ -5,17 +5,9 @@ import android.app.job.JobService;
 import android.content.Intent;
 import android.net.Uri;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import br.ufpe.cin.if710.podcast.Extras.Constantes;
 import br.ufpe.cin.if710.podcast.Extras.SharedPreferencesUtil;
-import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.domain.PodcastApplication;
-import br.ufpe.cin.if710.podcast.domain.XmlFeedParser;
 
 /**
  * Created by acpr on 12/12/17.
@@ -28,8 +20,9 @@ public class DownloadFeedJob extends JobService {
     //Runs on the mainThread!!!!
     @Override
     public boolean onStartJob(JobParameters params) {
+        baixarFeed();
         //True if your service needs to process the work (on a separate thread). False if there's no more work to be done for this job
-        return baixarFeed();
+        return true;
     }
 
     //Called if the system ever needs to stop this job before it has finished

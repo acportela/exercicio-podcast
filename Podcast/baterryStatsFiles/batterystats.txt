@@ -1,0 +1,398 @@
+Battery History (0% used, 432 used of 256KB, 11 strings using 652):
+                    0 (10) RESET:TIME: 2017-12-13-14-51-43
+                    0 (1) 100 status=not-charging health=good plug=none temp=0 volt=0 charge=0 +running +wake_lock +screen phone_signal_strength=moderate brightness=medium +wifi_running +wifi wifi_signal_strength=4 wifi_suppl=completed
+                    0 (2) 100 top=u0a21:"com.google.android.apps.nexuslauncher"
+                    0 (2) 100 job=u0a97:"br.ufpe.cin.if710.podcast/.services.DownloadFeedJob"
+                    0 (2) 100 user=0:"0"
+                    0 (2) 100 userfg=0:"0"
+                    0 (2) 100 longwake=u0a97:"*job*/br.ufpe.cin.if710.podcast/.services.DownloadFeedJob"
+                 +3ms (2) 100 stats=0:"dump"
+             +8s477ms (2) 100 +audio
+             +8s477ms (2) 100 -audio
+             +8s478ms (2) 100 +audio
+             +8s479ms (2) 100 -audio
+            +13s507ms (2) 100 +audio
+            +13s508ms (2) 100 -audio
+            +13s509ms (2) 100 +audio
+            +13s510ms (2) 100 -audio
+            +18s543ms (2) 100 +audio
+            +18s544ms (2) 100 -audio
+            +18s546ms (2) 100 +audio
+            +18s547ms (2) 100 -audio
+            +20s192ms (2) 100 +audio
+            +22s380ms (2) 100 -top=u0a21:"com.google.android.apps.nexuslauncher"
+            +22s380ms (2) 100 +top=u0a97:"br.ufpe.cin.if710.podcast"
+            +22s592ms (2) 100 +wifi_radio wakeupap=u0a97:""
+            +22s592ms (2) 100 stats=0:"wifi-data: active"
+            +25s584ms (2) 100 -audio
+            +26s302ms (2) 100 +audio
+            +29s500ms (2) 100 -audio
+            +30s441ms (2) 100 +audio
+            +33s684ms (2) 100 -audio
+            +43s982ms (2) 100 +audio
+            +48s428ms (2) 100 -audio
+          +1m39s774ms (1) 100 +wifi_scan
+          +1m39s802ms (1) 100 -wifi_scan
+          +1m50s000ms (2) 100 +audio
+          +1m53s012ms (2) 100 -audio
+          +1m56s898ms (2) 100 +audio
+          +2m00s127ms (2) 100 -audio
+          +2m15s626ms (2) 100 +audio
+          +2m24s224ms (2) 100 -audio
+          +2m25s338ms (2) 100 +audio
+          +2m27s707ms (2) 100 -top=u0a97:"br.ufpe.cin.if710.podcast"
+          +2m27s707ms (2) 100 +top=u0a38:"com.android.chrome"
+          +2m30s908ms (2) 100 -audio
+          +2m34s757ms (3) 100 +audio -top=u0a38:"com.android.chrome"
+          +2m35s097ms (2) 100 +top=u0a28:"com.android.systemui"
+          +2m37s913ms (2) 100 -top=u0a28:"com.android.systemui"
+          +2m37s913ms (2) 100 +top=u0a97:"br.ufpe.cin.if710.podcast"
+          +2m42s184ms (2) 100 -audio
+          +3m30s708ms (2) 100 -wifi_radio stats=0:"wifi-data: inactive"
+          +3m32s440ms (2) 100 stats=0:"dump"
+
+Per-PID Stats:
+  PID 0 wake time: +2s566ms
+  PID 1663 wake time: +287ms
+  PID 2076 wake time: +44ms
+  PID 0 wake time: +39s510ms
+  PID 2280 wake time: +54ms
+  PID 0 wake time: +2s44ms
+  PID 1663 wake time: +162ms
+  PID 1954 wake time: +45ms
+  PID 1663 wake time: 0
+  PID 1663 wake time: +1s460ms
+  PID 1663 wake time: +35m54s141ms
+
+Daily stats:
+  Current start time: 2017-12-13-13-59-17
+  Next min deadline: 2017-12-14-01-00-00
+  Next max deadline: 2017-12-14-03-00-00
+    Package changes:
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+  Daily from 2017-12-12-11-06-11 to 2017-12-13-13-59-17:
+    Package changes:
+      Update br.ufpe.cin.if710.podcast vers=0
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=0
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=0
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=0
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=0
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=0
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=0
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=0
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+  Daily from 2017-12-11-09-26-25 to 2017-12-12-11-06-11:
+    Package changes:
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast.test vers=0
+      Update br.ufpe.cin.if710.podcast vers=0
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast.test vers=0
+      Update br.ufpe.cin.if710.podcast.test vers=0
+      Update br.ufpe.cin.if710.podcast vers=0
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=0
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast vers=1
+  Daily from 2017-12-10-17-34-35 to 2017-12-11-09-26-25:
+    Package changes:
+      Update br.ufpe.cin.if710.podcast vers=1
+      Update br.ufpe.cin.if710.podcast.test vers=0
+      Update br.ufpe.cin.if710.podcast.test vers=0
+      Update br.ufpe.cin.if710.podcast.test vers=0
+      Update br.ufpe.cin.if710.podcast.test vers=0
+      Update br.ufpe.cin.if710.podcast.test vers=0
+
+Statistics since last charge:
+  System starts: 0, currently on battery: true
+  Estimated battery capacity: 1000 mAh
+  Time on battery: 3m 32s 445ms (100.0%) realtime, 3m 32s 445ms (100.0%) uptime
+  Time on battery screen off: 0ms (0.0%) realtime, 0ms (0.0%) uptime
+  Total run time: 3m 32s 445ms realtime, 3m 32s 445ms uptime
+  Discharge: 0 mAh
+  Screen off discharge: 0 mAh
+  Screen on discharge: 0 mAh
+  Start clock time: 2017-12-13-14-51-43
+  Screen on: 3m 32s 445ms (100.0%) 0x, Interactive: 3m 32s 445ms (100.0%)
+  Screen brightnesses:
+    medium 3m 32s 445ms (100.0%)
+  Total full wakelock time: 6s 934ms
+  Mobile total received: 0B, sent: 0B (packets received 0, sent 0)
+  Phone signal levels:
+    moderate 3m 32s 445ms (100.0%) 0x
+  Signal scanning time: 0ms
+  Radio types:
+    none 3m 32s 445ms (100.0%) 0x
+  Mobile radio active time: 0ms (0.0%) 0x
+  Radio Idle time:   0ms (--%)
+  Radio Rx time:     0ms (--%)
+  Radio Tx time:     0ms (--%)
+    [0] 0ms (--%)
+    [1] 0ms (--%)
+    [2] 0ms (--%)
+    [3] 0ms (--%)
+    [4] 0ms (--%)
+  Radio Power drain: 0mAh
+  Wi-Fi total received: 0B, sent: 0B (packets received 0, sent 0)
+  Wifi on: 3m 32s 445ms (100.0%), Wifi running: 3m 32s 445ms (100.0%)
+  Wifi states: (no activity)
+  Wifi supplicant states:
+    completed 3m 32s 445ms (100.0%) 0x
+  Wifi signal levels:
+    level(4) 3m 32s 445ms (100.0%) 0x
+  WiFi Idle time:   0ms (--%)
+  WiFi Rx time:     0ms (--%)
+  WiFi Tx time:     0ms (--%)
+  WiFi Power drain: 0mAh
+  Bluetooth total received: 0B, sent: 0B
+  Bluetooth scan time: 0ms 
+  Bluetooth Idle time:   0ms (--%)
+  Bluetooth Rx time:     0ms (--%)
+  Bluetooth Tx time:     0ms (--%)
+  Bluetooth Power drain: 0mAh
+
+  Device battery use since last full charge
+    Amount discharged (lower bound): 0
+    Amount discharged (upper bound): 0
+    Amount discharged while screen on: 0
+    Amount discharged while screen off: 0
+
+  Estimated power use (mAh):
+    Capacity: 1000, Computed drain: 0.204, actual drain: 0
+    Uid 1000: 0.177 ( sensor=0.177 )
+    Screen: 0.00885
+    Wifi: 0.00590 ( wifi=0.00590 )
+    Idle: 0.00590
+    Cell standby: 0.00590 ( radio=0.00590 )
+    Uid 0: 0
+
+  0:
+    Proc kworker/u4:2:
+      CPU: 0ms usr + 10ms krn ; 0ms fg
+    Proc rcu_preempt:
+      CPU: 0ms usr + 20ms krn ; 0ms fg
+    Proc logd:
+      CPU: 0ms usr + 10ms krn ; 0ms fg
+    Proc adbd:
+      CPU: 0ms usr + 30ms krn ; 0ms fg
+    Proc surfaceflinger:
+      CPU: 110ms usr + 280ms krn ; 0ms fg
+  1000:
+    User activity: 3 other, 6 button, 25 touch
+    Wake lock *alarm* realtime
+    Wake lock AudioMix realtime
+    Sensor 0: 3m 32s 445ms realtime (0 times)
+    Cached for: 3m 32s 445ms 
+    Total running: 3m 32s 445ms 
+    Proc system:
+      CPU: 80ms usr + 60ms krn ; 0ms fg
+    Apk android:
+      Wakeup alarm *walarm*:WifiConnectivityManager Schedule Periodic Scan Timer: 1 times
+  1001:
+    Wake lock RILJ realtime
+    Fg Service for: 3m 32s 445ms 
+    Total running: 3m 32s 445ms 
+    Proc com.android.phone:
+      CPU: 10ms usr + 0ms krn ; 0ms fg
+  1010:
+    Wifi Running: 0ms (0.0%)
+    Full Wifi Lock: 0ms (0.0%)
+    Wifi Scan: 28ms (0.0%) 1x
+    (nothing executed)
+  1041:
+    Wake lock AudioMix realtime
+    Wake lock AudioIn realtime
+    Audio: 44s 120ms realtime (14 times)
+  2000:
+    Proc logcat:
+      CPU: 0ms usr + 10ms krn ; 0ms fg
+  u0a1:
+    Cached for: 3m 32s 445ms 
+    Total running: 3m 32s 445ms 
+  u0a8:
+    Cached for: 3m 32s 445ms 
+    Total running: 3m 32s 445ms 
+  u0a14:
+    Wake lock *net_scheduler* realtime
+    Top for: 32ms 
+    Fg Service for: 22s 705ms 
+    Foreground for: 3m 9s 708ms 
+    Total running: 3m 32s 445ms 
+    Proc com.google.process.gapps:
+      CPU: 10ms usr + 0ms krn ; 0ms fg
+    Proc com.google.android.gms:
+      CPU: 50ms usr + 40ms krn ; 0ms fg
+  u0a15:
+    Fg Service for: 3m 32s 445ms 
+    Total running: 3m 32s 445ms 
+  u0a19:
+    Top for: 22ms 
+    Cached for: 3m 32s 423ms 
+    Total running: 3m 32s 445ms 
+  u0a21:
+    Foreground activities: 22s 377ms realtime (0 times)
+    Top for: 22s 705ms 
+    Background for: 14ms 
+    Cached for: 3m 9s 726ms 
+    Total running: 3m 32s 445ms 
+    Proc com.google.android.apps.nexuslauncher:
+      CPU: 10ms usr + 0ms krn ; 90ms fg
+  u0a28:
+    Wake lock RingtonePlayer realtime
+    Wake lock AudioMix realtime
+    Wake lock *launch* realtime
+    Foreground activities: 2s 807ms realtime (1 times)
+    Fg Service for: 3m 32s 445ms 
+    Total running: 3m 32s 445ms 
+    Proc com.android.systemui:
+      CPU: 0ms usr + 0ms krn ; 100ms fg
+  u0a29:
+    Wake lock *alarm* realtime
+    Top for: 22s 705ms 
+    Fg Service for: 3m 9s 740ms 
+    Total running: 3m 32s 445ms 
+    Proc com.google.android.googlequicksearchbox:search:
+      CPU: 30ms usr + 10ms krn ; 0ms fg
+    Apk com.google.android.googlequicksearchbox:
+      Service com.google.android.ssb.service.SsbService:
+        Created for: 0ms uptime
+        Starts: 0, launches: 1
+      Service com.google.android.apps.gsa.eventlogger.EventLoggerService:
+        Created for: 45ms uptime
+        Starts: 1, launches: 1
+  u0a38:
+    Wake lock *launch* realtime
+    Foreground activities: 7s 215ms realtime (2 times)
+    Top for: 6s 921ms 
+    Fg Service for: 448ms 
+    Background for: 29ms 
+    Cached for: 3m 25s 47ms 
+    Total running: 3m 32s 445ms 
+    Proc com.android.chrome:sandboxed_process0:
+      CPU: 0ms usr + 0ms krn ; 0ms fg
+      1 starts
+    Proc com.android.chrome:
+      CPU: 20ms usr + 40ms krn ; 1s 730ms fg
+    Proc com.android.chrome:privileged_process0:
+      CPU: 0ms usr + 0ms krn ; 0ms fg
+      1 starts
+    Apk com.android.chrome:
+      Service org.chromium.chrome.browser.download.DownloadNotificationService:
+        Created for: 3ms uptime
+        Starts: 1, launches: 1
+      Service org.chromium.chrome.browser.omaha.OmahaClient:
+        Created for: 25ms uptime
+        Starts: 1, launches: 1
+      Service org.chromium.content.app.PrivilegedProcessService0:
+        Created for: 0ms uptime
+        Starts: 0, launches: 1
+      Service org.chromium.content.app.SandboxedProcessService0:
+        Created for: 0ms uptime
+        Starts: 0, launches: 1
+  u0a43:
+    Cached for: 3m 32s 445ms 
+    Total running: 3m 32s 445ms 
+  u0a55:
+    Background for: 3m 32s 445ms 
+    Total running: 3m 32s 445ms 
+  u0a66:
+    Cached for: 3m 32s 445ms 
+    Total running: 3m 32s 445ms 
+  u0a69:
+    Cached for: 3m 32s 445ms 
+    Total running: 3m 32s 445ms 
+  u0a97:
+    WiFi AP wakeups: 1
+    Wake lock *vibrator* realtime
+    Wake lock *launch* realtime
+    Wake lock *job*/br.ufpe.cin.if710.podcast/.services.DownloadFeedJob realtime
+    Wake lock WindowManager: 6s 934ms full (2 times) realtime
+    TOTAL wake: 6s 934ms full realtime
+    Job br.ufpe.cin.if710.podcast/.services.DownloadFeedJob: 3m 32s 445ms realtime (0 times)
+    Vibrator: 2s 0ms realtime (2 times)
+    Foreground activities: 2m 59s 839ms realtime (4 times) (running)
+    Top for: 3m 1s 312ms 
+    Background for: 31s 133ms 
+    Total running: 3m 32s 445ms 
+    Proc br.ufpe.cin.if710.podcast:
+      CPU: 160ms usr + 40ms krn ; 11s 760ms fg
+    Apk br.ufpe.cin.if710.podcast:
+      Service br.ufpe.cin.if710.podcast.services.UpdateFeedService:
+        Created for: 2s 159ms uptime
+        Starts: 2, launches: 2
+      Service br.ufpe.cin.if710.podcast.services.DownloadPodcastService:
+        Created for: 1m 45s 115ms uptime
+        Starts: 1, launches: 1
+

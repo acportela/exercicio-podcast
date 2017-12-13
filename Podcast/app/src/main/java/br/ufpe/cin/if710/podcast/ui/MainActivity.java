@@ -28,6 +28,7 @@ import br.ufpe.cin.if710.podcast.Extras.Permissions;
 import br.ufpe.cin.if710.podcast.Extras.PodcastItemCurrentState;
 import br.ufpe.cin.if710.podcast.Extras.SharedPreferencesUtil;
 import br.ufpe.cin.if710.podcast.R;
+import br.ufpe.cin.if710.podcast.db.PodcastDBHelper;
 import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
 import br.ufpe.cin.if710.podcast.db.PodcastSQLiteDML;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
@@ -40,7 +41,7 @@ import br.ufpe.cin.if710.podcast.ui.adapter.XmlFeedAdapter;
 
 public class MainActivity extends Activity implements PodcastDMLCommandReport, PodcastItemClickListener {
 
-    private ListView items;
+    private ListView listView;
     private XmlFeedAdapter xmlAdapter;
     private LinearLayout layoutProgress;
     private BroadcastReceiver feedReceiver;
@@ -55,7 +56,7 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        items = (ListView) findViewById(R.id.items);
+        listView = (ListView) findViewById(R.id.items);
         layoutProgress = (LinearLayout) findViewById(R.id.layoutProgress);
 
         //CRIEI UM RECEIVER PARA ISOLAR O DOWNLOAD DO FEED EM UM SERVICE
@@ -70,16 +71,20 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
 
         registerReceiver(feedReceiver,new IntentFilter(UpdateFeedService.ACTION_FEED_UPDATED));
         registerReceiver(downloadFinishedReceiver,new IntentFilter(DownloadPodcastService.DOWNLOAD_HAS_ENDED_ACTION));
-
         SharedPreferencesUtil.setBooleanOnSharedPreferences(Constantes.KEY_INSERTED_IN_CURRENT_SESSION,false,this);
-    }
 
+
+        //Baixando o feed. Se não houver conexão, pega do banco
+        layoutProgress.setVisibility(View.VISIBLE);
+        if(!baixarFeed()){
+            setView();
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -94,27 +99,51 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
                     FileUtils.deleteAllFilesFromPuclicDirectory(Environment.DIRECTORY_PODCASTS,this);
                     baixarFeed();
                 }
+                else {
+                    Toast.makeText(getApplicationContext(), "Baixando um podcast, aguarde", Toast.LENGTH_LONG).show();
+                }
             }
         }
         return super.onOptionsItemSelected(item);
     }
-
     @Override
     protected void onStart() {
         super.onStart();
 
-        layoutProgress.setVisibility(View.VISIBLE);
+        //Limpo a lista caso tenha pouca memória
+        //e o app esteja em background
+        if(listView == null){
 
-        //Baixando o feed. Se não houver conexão, pega do banco
-        if(!baixarFeed()){
-            setView();
+            listView = (ListView) findViewById(R.id.items);
+
+            layoutProgress.setVisibility(View.VISIBLE);
+            if(!baixarFeed()){
+                setView();
+            }
         }
     }
-
     @Override
-    protected void onStop() {
-        super.onStop();
-        if(xmlAdapter != null) xmlAdapter.clear();
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+
+        ///ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
+        //boolean isLowRam = ActivityManagerCompat.isLowRamDevice(am);
+
+        //Em primeiro plano. Logo, não posso limpar a listView
+        if( (level == TRIM_MEMORY_RUNNING_CRITICAL) || (level == TRIM_MEMORY_RUNNING_LOW) ){
+            PodcastDBHelper.getInstance(this).getReadableDatabase().releaseMemory();
+        }
+        //Testei também o TRIM_MEMORY_UI_HIDDEN, mas era chamado toda vez que entrava em segundo plano
+        else if(level == TRIM_MEMORY_BACKGROUND){
+            if(xmlAdapter != null) xmlAdapter.clear();
+            listView = null;
+        }
+        //TRIM_MEMORY_COMPLETE - Background e será um dos primeiros a morrer
+        else if( level == TRIM_MEMORY_COMPLETE){
+            PodcastDBHelper.getInstance(this).getReadableDatabase().releaseMemory();
+            if(xmlAdapter != null) xmlAdapter.clear();
+            listView = null;
+        }
     }
 
     @Override
@@ -123,6 +152,14 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         unregisterReceiver(downloadFinishedReceiver);
         super.onDestroy();
     }
+
+
+
+
+
+    //Aqui se encerra os métodos do ciclo de vida
+
+
 
     @Override
     public void onDmlQueryFinished(Cursor cursor) {
@@ -149,15 +186,13 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
                         baixarPodcast();
                     }
                 }
-
             }
             else {
                 Toast.makeText(getApplicationContext(), "Só é possível baixar um podcast por vez", Toast.LENGTH_LONG).show();
             }
         }
         else {
-            //TOCAR
-            // Faltando
+            //TOCAR TO-DO
         }
     }
 
@@ -232,9 +267,14 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         }
         else if(requestCode == Permissions.REQUEST_CODE_DELETE_ALL_PODCASTS){
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                PodcastSQLiteDML.getInstance().deletePodcasts(getApplicationContext(),null,"1",null);
-                FileUtils.deleteAllFilesFromPuclicDirectory(Environment.DIRECTORY_PODCASTS,this);
-                baixarFeed();
+                if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,this) == false){
+                    PodcastSQLiteDML.getInstance().deletePodcasts(getApplicationContext(),null,"1",null);
+                    FileUtils.deleteAllFilesFromPuclicDirectory(Environment.DIRECTORY_PODCASTS,this);
+                    baixarFeed();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Baixando podcast, aguarde", Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
@@ -301,7 +341,7 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
     public void updateViewFromList() {
         if (PodcastApplication.getNewfeedList() != null) {
             xmlAdapter = new XmlFeedAdapter(getApplicationContext(), R.layout.itemlista, PodcastApplication.getNewfeedList(), this);
-            this.items.setAdapter(xmlAdapter);
+            this.listView.setAdapter(xmlAdapter);
         }
     }
 }
