@@ -16,7 +16,7 @@ import java.util.List;
 public class Permissions {
 
     public static final int REQUEST_CODE_SAVE_PODCAST_TO_DISK = 0;
-    public static final int REQUEST_CODE_JUST_CHECK_AND_ASK = 1;
+    public static final int REQUEST_CODE_DELETE_ALL_PODCASTS = 1;
 
     public static boolean checkPermissionIsGranted(Activity activity, int requestCode){
 

@@ -32,7 +32,7 @@ public class UpdateFeedService extends IntentService {
         Uri uri = intent.getData();
         List<ItemFeed> newList = getItemsFromServer(uri.toString());
         if(newList != null && !newList.isEmpty()){
-            PodcastApplication.newfeedList = newList;
+            PodcastApplication.setNewfeedList(newList);
             sendBroadcast(new Intent(ACTION_FEED_UPDATED));
         }
         stopSelf();

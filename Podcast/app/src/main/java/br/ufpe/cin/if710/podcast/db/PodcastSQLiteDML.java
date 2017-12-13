@@ -4,8 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.os.CountDownTimer;
-import android.os.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +108,7 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
 
         @Override
         public void onPostExecute(Cursor result) {
-            listener.onDmlInsertFineshed(result);
+            listener.onDmlInsertFinished(result);
             t = null;
         }
     }
@@ -139,7 +137,7 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
 
         @Override
         public void onPostExecute(Cursor result) {
-            listener.onDmlUpdateFineshed(result);
+            listener.onDmlUpdateFinished(result);
             t = null;
         }
     }
@@ -192,7 +190,7 @@ public class PodcastSQLiteDML implements PodcastDMLInterface {
 
         @Override
         public void onPostExecute(Cursor result) {
-            listener.onDmlQueryFineshed(result);
+            listener.onDmlQueryFinished(result);
             t = null;
         }
     }

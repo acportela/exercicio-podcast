@@ -14,7 +14,7 @@ public class FileUtils {
 
     public static void deleteAllFilesFromPuclicDirectory(String publicDir, Context ctx){
         File root = Environment.getExternalStoragePublicDirectory(publicDir);
-        root.mkdir();
+        root.mkdirs();
         if(root.exists()){
             File[] files = root.listFiles();
             if(files != null){

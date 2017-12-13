@@ -33,7 +33,7 @@ public class PodcastProvider extends ContentProvider {
 
         if (isPodcastFeedUri(uri)) {
 
-            long id = db.getInstance(getContext()).getWritableDatabase().insertWithOnConflict(PodcastDBHelper.EPISODE_TABLE,null,values, SQLiteDatabase.CONFLICT_REPLACE);
+            long id = db.getInstance(getContext()).getWritableDatabase().insertWithOnConflict(PodcastDBHelper.EPISODE_TABLE,null,values, SQLiteDatabase.CONFLICT_IGNORE);
 
             return Uri.withAppendedPath(PodcastProviderContract.EPISODE_LIST_URI, Long.toString(id));
         }
@@ -51,7 +51,7 @@ public class PodcastProvider extends ContentProvider {
         try {
 
             for (ContentValues cv : values) {
-                long newID = sqlDB.insertWithOnConflict(PodcastDBHelper.EPISODE_TABLE, null, cv,SQLiteDatabase.CONFLICT_REPLACE);
+                long newID = sqlDB.insertWithOnConflict(PodcastDBHelper.EPISODE_TABLE, null, cv,SQLiteDatabase.CONFLICT_IGNORE);
                 if (newID > 0) numInserted++;
             }
             sqlDB.setTransactionSuccessful();

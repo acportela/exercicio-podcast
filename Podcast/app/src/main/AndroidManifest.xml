@@ -25,19 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.SettingsActivity" />
 
-        <!--
-        <receiver
-            android:name=".listeners.FeedWasDownloadedReceiver"
-            android:exported="false"
-            android:enabled="true"
-            >
-            <intent-filter>
-                <action android:name="br.ufpe.cin.if710.podcast.action.FeedWasUpdated" />
-            </intent-filter>
-        </receiver>
-        -->
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".services.DownloadPodcastService"
@@ -47,6 +38,13 @@
             android:name=".services.UpdateFeedService"
             android:enabled="true"
             android:exported="false" />
+
+        <service
+            android:name=".services.DownloadFeedJob"
+            android:enabled="true"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            />
 
         <!--
             <service android:name=".ui.MainActivity$DownloadServiceExtension"

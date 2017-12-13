@@ -22,9 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.frogermcs.androiddevmetrics.internal.MethodsTracingManager;
-import com.squareup.leakcanary.RefWatcher;
-
 import br.ufpe.cin.if710.podcast.Extras.Constantes;
 import br.ufpe.cin.if710.podcast.Extras.FileUtils;
 import br.ufpe.cin.if710.podcast.Extras.Permissions;
@@ -43,7 +40,6 @@ import br.ufpe.cin.if710.podcast.ui.adapter.XmlFeedAdapter;
 
 public class MainActivity extends Activity implements PodcastDMLCommandReport, PodcastItemClickListener {
 
-    private final String RSS_FEED = "http://leopoldomt.com/if710/fronteirasdaciencia.xml";
     private ListView items;
     private XmlFeedAdapter xmlAdapter;
     private LinearLayout layoutProgress;
@@ -52,29 +48,7 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
     private ItemFeed currentItemToDownload;
 
     //FLUXO RESUMIDO
-    /*
-    * 1 - Sempre confiro se há algo na base para ser exibido enquanto que o feed é baixado
-    * 2 - Uma vez terminado o download do RSS
-    *   2.1 Se já ouver algo no banco, faço um update baseado no link da página do podcast
-    *   2.2 Se o link já existir não insiro
-    * 3 - Se usuário clicar em fazer o download, o ep é baixado
-    *     infelizmente a ListView só é atualizada quando se toca na notificação
-    *
-    * Todos os métodos de gerenciamento do banco possuem um callback
-    * Que tanto esta activity quanto o service de Download implementam (PodcastDMLCommandReport)
-    *
-    * Existe uma lista (model) global de feeds em PodcastApplication que é
-    * atualizada sempre que retorna algo do banco
-    * -> PodcastApplication.newfeedList
-    *
-    * A ListView e o a lista de dados (model) são atualizadas em:
-    * updateViewAndModelFromCurrentDatabase() ou
-    * updateViewAndModelFromCursor()
-    * e são chamadaas sempre que um dos callbacks do banco for chamado
-    *
-    * PodcastSQLiteDML é uma classe que usa AsyncTasks para chamar atualizar o banco
-    * chama o PodcastProvider no doInBackground
-     */
+    //TO-DO
 
 
     @Override
@@ -94,6 +68,10 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         //Outro para ser notificado quando o download do podcast acabar
         downloadFinishedReceiver = new DownloadFinishedReceiver();
 
+        registerReceiver(feedReceiver,new IntentFilter(UpdateFeedService.ACTION_FEED_UPDATED));
+        registerReceiver(downloadFinishedReceiver,new IntentFilter(DownloadPodcastService.DOWNLOAD_HAS_ENDED_ACTION));
+
+        SharedPreferencesUtil.setBooleanOnSharedPreferences(Constantes.KEY_INSERTED_IN_CURRENT_SESSION,false,this);
     }
 
     @Override
@@ -110,9 +88,13 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
             startActivity(new Intent(this,SettingsActivity.class));
         }
         else if(id == R.id.action_delete_all_data){
-            PodcastSQLiteDML.getInstance().deletePodcasts(getApplicationContext(),null,"1",null);
-            FileUtils.deleteAllFilesFromPuclicDirectory(Environment.DIRECTORY_PODCASTS,this);
-            baixarFeed();
+            if(Permissions.checkPermissionIsGranted(this,Permissions.REQUEST_CODE_DELETE_ALL_PODCASTS)){
+                if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,this) == false){
+                    PodcastSQLiteDML.getInstance().deletePodcasts(getApplicationContext(),null,"1",null);
+                    FileUtils.deleteAllFilesFromPuclicDirectory(Environment.DIRECTORY_PODCASTS,this);
+                    baixarFeed();
+                }
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -121,39 +103,38 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
     protected void onStart() {
         super.onStart();
 
-        registerReceiver(feedReceiver,new IntentFilter(UpdateFeedService.ACTION_FEED_UPDATED));
-        registerReceiver(downloadFinishedReceiver,new IntentFilter(DownloadPodcastService.DOWNLOAD_HAS_ENDED_ACTION));
-
         layoutProgress.setVisibility(View.VISIBLE);
 
-        //Preencho a lista com o conteúdo da base
-        updateViewAndModelFromCurrentDatabase();
-        //Tento baixar o feed
-        baixarFeed();
+        //Baixando o feed. Se não houver conexão, pega do banco
+        if(!baixarFeed()){
+            setView();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         if(xmlAdapter != null) xmlAdapter.clear();
+    }
+
+    @Override
+    protected void onDestroy() {
         unregisterReceiver(feedReceiver);
         unregisterReceiver(downloadFinishedReceiver);
+        super.onDestroy();
     }
 
     @Override
-    public void onDmlQueryFineshed(Cursor cursor) {
-
+    public void onDmlQueryFinished(Cursor cursor) {
     }
-
     //Retorno do PodcastSQLiteDML para o inserir
     @Override
-    public void onDmlInsertFineshed(Cursor cursor) {
-        updateViewAndModelFromCursor(cursor);
+    public void onDmlInsertFinished(Cursor cursor) {
+        SharedPreferencesUtil.setBooleanOnSharedPreferences(Constantes.KEY_INSERTED_IN_CURRENT_SESSION,true,this);
     }
     //Retorno do PodcastSQLiteDML para o atualizar
     @Override
-    public void onDmlUpdateFineshed(Cursor cursor) {
-        updateViewAndModelFromCursor(cursor);
+    public void onDmlUpdateFinished(Cursor cursor) {
     }
 
     ////////////////////////////// AÇÕES RELATIVAS AO CLICK NO ITEM DA LISTA
@@ -161,16 +142,17 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
     public void userRequestedPodcastItemAction(PodcastItemCurrentState currentState, int position) {
         //Baixar ou Tocar Episódio
         if(currentState == PodcastItemCurrentState.INTHECLOUD){
-            //BAIXAR
-            currentItemToDownload = PodcastApplication.newfeedList.get(position);
-            if(currentItemToDownload.getDownloadLink() != null){
-                //Checa se há permissão para escrita no external storage
-                if(Permissions.checkPermissionIsGranted(this,Permissions.REQUEST_CODE_SAVE_PODCAST_TO_DISK)){
-                    //Checa se já não está baixando um podcast
-                    if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,this) == false){
+            if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,this) == false){
+                currentItemToDownload = PodcastApplication.getNewfeedList().get(position);
+                if(currentItemToDownload.getDownloadLink() != null){
+                    if(Permissions.checkPermissionIsGranted(this,Permissions.REQUEST_CODE_SAVE_PODCAST_TO_DISK)){
                         baixarPodcast();
                     }
                 }
+
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "Só é possível baixar um podcast por vez", Toast.LENGTH_LONG).show();
             }
         }
         else {
@@ -179,25 +161,24 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         }
     }
 
-    private void baixarFeed(){
+    private boolean baixarFeed(){
         //Service para baixar o feed
         if(PodcastApplication.isNetworkAvailable(this)){
             //Só atualiza a lista se não estiver baixando nada
             if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,this) == false){
                 Intent updateFeedIntent = new Intent(getApplicationContext(),UpdateFeedService.class);
-                updateFeedIntent.setData(Uri.parse(RSS_FEED));
+                updateFeedIntent.setData(Uri.parse(Constantes.RSS_FEED));
                 startService(updateFeedIntent);
             }
+            return true;
         }
-        else {
-            //Aviso sem rede
-        }
+        return false;
     }
 
     private void baixarPodcast(){
         if(PodcastApplication.isNetworkAvailable(this)){
             currentItemToDownload.setCurrentState(PodcastItemCurrentState.DOWNLOADING);
-            updateViewFromList();
+            setView();
             Intent downloadService = new Intent(getApplicationContext(),DownloadPodcastService.class);
             downloadService.setData(Uri.parse(currentItemToDownload.getDownloadLink()));
             downloadService.putExtra(DownloadPodcastService.INTENT_KEY_PAGE_LINK,currentItemToDownload.getLink());
@@ -210,20 +191,23 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
 
     //Chamado pelo receiver do download do feed
     private void xmlFeedWasDownloaded(){
-        PodcastSQLiteDML.getInstance().insertPodcastBatch(this,this,PodcastApplication.newfeedList,true);
+        setView();
+        if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_INSERTED_IN_CURRENT_SESSION,this) == false){
+            PodcastSQLiteDML.getInstance().insertPodcastBatch(this,this,PodcastApplication.getNewfeedList(),true);
+        }
     }
 
     //Chamado pelo receiver do download do podcast
     private void podcastWasDownloaded(){
         SharedPreferencesUtil.setBooleanOnSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,false,this);
         currentItemToDownload.setCurrentState(PodcastItemCurrentState.DOWNLOADED);
-        updateViewFromList();
+        setView();
     }
 
     //ABRIR TELA DETALHES
     @Override
     public void userRequestedEpisodeDetails(int position) {
-        ItemFeed pod = PodcastApplication.newfeedList.get(position);
+        ItemFeed pod = PodcastApplication.getNewfeedList().get(position);
         Intent detailsIntent = new Intent(this,EpisodeDetailActivity.class);
         detailsIntent.putExtra(EpisodeDetailActivity.INTENT_DETAILS_TITLE_KEY,pod.getTitle());
         detailsIntent.putExtra(EpisodeDetailActivity.INTENT_DETAILS_DATE_KEY,pod.getPubDate());
@@ -231,50 +215,6 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
         detailsIntent.putExtra(EpisodeDetailActivity.INTENT_DETAILS_LINK_KEY,pod.getLink());
         startActivity(detailsIntent);
     }
-
-
-    //PARTE PARA ATUALIZAR VIEWS E MODELS
-
-    private void updateViewAndModelFromCurrentDatabase(){
-        Cursor c = PodcastSQLiteDML.getInstance().queryPodcasts(this,"1",null, PodcastProviderContract.EPISODE_DATE);
-        if(c.getCount() != 0){
-            PodcastApplication.updateModelFromCursor(c);
-           /* if(cursorAdapter == null){
-                cursorAdapter = new PodcastCursorAdapter(this,this,c,getLayoutInflater());
-            }
-            else {
-                cursorAdapter.changeCursor(c);
-            }
-            items.setAdapter(cursorAdapter);*/
-            updateViewFromList();
-            layoutProgress.setVisibility(View.GONE);
-        }
-    }
-
-    private void updateViewAndModelFromCursor(Cursor c){
-        if(c.getCount() != 0){
-            PodcastApplication.updateModelFromCursor(c);
-          /*  if(cursorAdapter == null){
-                cursorAdapter = new PodcastCursorAdapter(this,this,c,getLayoutInflater());
-            }
-            else {
-                cursorAdapter.changeCursor(c);
-            }
-            items.setAdapter(cursorAdapter);*/
-            updateViewFromList();
-            layoutProgress.setVisibility(View.GONE);
-        }
-    }
-
-    //Para atualizar a ListView
-    public void updateViewFromList() {
-        if (PodcastApplication.newfeedList != null) {
-            xmlAdapter = new XmlFeedAdapter(getApplicationContext(), R.layout.itemlista, PodcastApplication.newfeedList, this);
-            this.items.setAdapter(xmlAdapter);
-        }
-    }
-
-
 
     //TRATA PERMISSÕES
     @Override
@@ -285,6 +225,16 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
                 if(SharedPreferencesUtil.getBooleanFromSharedPreferences(Constantes.KEY_DOWNLOADING_PODCAST,this) == false){
                     baixarPodcast();
                 }
+                else {
+                    Toast.makeText(getApplicationContext(), "Só é possível baixar um podcast por vez", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+        else if(requestCode == Permissions.REQUEST_CODE_DELETE_ALL_PODCASTS){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                PodcastSQLiteDML.getInstance().deletePodcasts(getApplicationContext(),null,"1",null);
+                FileUtils.deleteAllFilesFromPuclicDirectory(Environment.DIRECTORY_PODCASTS,this);
+                baixarFeed();
             }
         }
     }
@@ -320,6 +270,38 @@ public class MainActivity extends Activity implements PodcastDMLCommandReport, P
             notificationManager.notify(MY_NOTIFICATION_ID, myNotification);
 
             podcastWasDownloaded();
+        }
+    }
+
+
+    //Esta função escolhe da onde deve vir os dados para alimentar a view
+    //Se não existir nada em memória, ela atualiza o model pelo cursor ou banco
+    //E depois atualiza a view
+    private void setView(){
+        if(PodcastApplication.getNewfeedList() != null && PodcastApplication.getNewfeedList().size() > 0){
+            updateViewFromList();
+        }
+        else {
+            updateViewAndModelFromCurrentDatabase();
+        }
+        layoutProgress.setVisibility(View.GONE);
+    }
+
+
+
+    private void updateViewAndModelFromCurrentDatabase(){
+        Cursor c = PodcastSQLiteDML.getInstance().queryPodcasts(this,"1",null, PodcastProviderContract.EPISODE_DATE);
+        if(c.getCount() != 0){
+            PodcastApplication.updateModelFromCursor(c);
+            updateViewFromList();
+        }
+    }
+
+    //Para atualizar a ListView
+    public void updateViewFromList() {
+        if (PodcastApplication.getNewfeedList() != null) {
+            xmlAdapter = new XmlFeedAdapter(getApplicationContext(), R.layout.itemlista, PodcastApplication.getNewfeedList(), this);
+            this.items.setAdapter(xmlAdapter);
         }
     }
 }

@@ -87,16 +87,16 @@ public class DownloadPodcastService extends IntentService implements PodcastDMLC
     }
 
     @Override
-    public void onDmlUpdateFineshed(Cursor cursor) {
+    public void onDmlUpdateFinished(Cursor cursor) {
         sendBroadcast(new Intent(DOWNLOAD_HAS_ENDED_ACTION));
         stopSelf();
     }
     @Override
-    public void onDmlQueryFineshed(Cursor cursor) {
+    public void onDmlQueryFinished(Cursor cursor) {
 
     }
     @Override
-    public void onDmlInsertFineshed(Cursor cursor) {
+    public void onDmlInsertFinished(Cursor cursor) {
 
     }
 }
