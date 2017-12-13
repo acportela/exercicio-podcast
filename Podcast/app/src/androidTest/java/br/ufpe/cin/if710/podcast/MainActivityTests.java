@@ -20,8 +20,10 @@ import br.ufpe.cin.if710.podcast.ui.MainActivity;
 import static android.content.ContentValues.TAG;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openContextualActionModeOverflowMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.anything;
 
 
@@ -64,6 +66,14 @@ public class MainActivityTests {
         onData(anything()).inAdapterView(withId(R.id.items)).atPosition(0).perform(click());
         Thread.sleep(1000);
         onView(withId(R.id.detailEpisodeLink)).perform(click());
+    }
+
+    //Testa a abertura do options menu e do click no item "Delete All Podcasts"
+    @Test
+    public void deleteAllPodcastsTest() throws InterruptedException{
+        openContextualActionModeOverflowMenu();
+        Thread.sleep(1000);
+        onView(withText("Delete All Data")).perform(click());
     }
 
     //Só funciona para locale EN devido ao nome do botão
