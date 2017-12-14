@@ -38,14 +38,15 @@ Na MainActivity não foi constatado nenhuma perda de frame, enquanto o EpisodeDe
 ![alt text](screens/androidDevMetricsELeakCanary/devMetrics1.png "AndroidDevMetrics - MainActivity")
 ![alt text](screens/androidDevMetricsELeakCanary/devMetricsEpisodeDetails.png "AndroidDevMetrics - EpisodeDetails")
 
-*obs: tentamos ativar a opção de methodTracing do AndroidDevMetrics, mas essa funcionalidade requer um dispositivo real e só tivemos acesso a um emulador (usuário iOS =/ )
+*obs: tentamos ativar a opção de methodTracing do AndroidDevMetrics, mas essa funcionalidade requer um dispositivo real e só tivemos acesso a um emulador (usuário iOS =/ )*
+
 ![alt text](screens/androidDevMetricsELeakCanary/devMetrics1ErroTracingEmulator.png "AndroidDevMetrics - Erro Emulador")
 
 
 Por último, destacamos com o profiler a funcionalidade de baixar um podcast da rede. Detalharemos mais no arqvuivo *bandwidth.md*
 
-![alt text](screens/androidDevMetricsELeakCanary/inicioBaixarPodcast.png "Baixando - Início")
-![alt text](screens/androidDevMetricsELeakCanary/finalBaixarPodcast.png "Baixando - Final")
+![alt text](screens/profiler/inicioBaixarPodcast.png "Baixando - Início")
+![alt text](screens/profiler/finalBaixarPodcast.png "Baixando - Final")
 
 
 
