@@ -74,6 +74,7 @@ public class MainActivityTests {
         openContextualActionModeOverflowMenu();
         Thread.sleep(1000);
         onView(withText("Delete All Data")).perform(click());
+        allowPermissionsIfNeeded();
     }
 
     //Só funciona para locale EN devido ao nome do botão
