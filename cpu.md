@@ -1,17 +1,22 @@
 # CPU & Performance
 
-Para os testes foram utilizadas as ferramentas **Android Profiler**, **Trace View** e **Android Dev Metrics**
+Para os testes foram utilizadas as ferramentas **AndroidProfiler**, **TraceView** e **AndroidDevMetrics**
 
 Uma das primeiras alterações no código foi trocar os diversos inserts no banco por uma inserção em batch. Colocamos uma flag no método de inserir que permite escolher entre bulkInsert e um loop com vários inserts.
 
-* Como primeiro teste, utilizamos o AndroidProfiler para verificar de forma mais grosseira a diferença entre ambos
+* Como primeiro teste, utilizamos o AndroidProfiler para verificar de forma grosseira a diferença entre ambos
+
+* BulkInsert
 
 ![alt text](screens/profiler/bulkInsert.png "profiler - Bulk Insert")
+
+* Loop com vários inserts
+
 ![alt text](screens/profiler/variosInsertsLoop.png "profiler - Normal Insert")
 
 * Como podemos ver, aparentemente o bulkInsert exige mais do processador, porém durante menos tempo. Este teste no entanto, não é tão preciso pois durante esse mesmo intervalo de tempo há um serviço de download do feed sendo executado.
 
-Aqui está o códgido:
+Aqui está o códgido (note a flag *bulkInsert*):
 
 ![alt text](screens/inserts/inserts.png "normal insert or bulk")
 
@@ -19,7 +24,12 @@ Outra alternativa que tentamos foi usar um método startMethodTracing() para med
 
 Para visualizar o a saída do tracing usamos o TraceView:
 
+* BulkInsert
+
 ![alt text](screens/inserts/bulkInsert1.png "TraceView - Bulk Insert")
+
+* Um insert isolado
+
 ![alt text](screens/inserts/regularInsert3.png "TraceView - Normal Insert")
 
 Por último, utilizamos o AndroidDevMetrics para medir o tempo dos métodos do ciclo de vida das duas activities do nosso app.
@@ -29,6 +39,13 @@ Na MainActivity não foi constatado nenhuma perda de frame, enquanto o EpisodeDe
 ![alt text](screens/androidDevMetricsELeakCanary/devMetricsEpisodeDetails.png "AndroidDevMetrics - EpisodeDetails")
 
 *obs: tentamos ativar a opção de methodTracing do AndroidDevMetrics, mas essa funcionalidade requer um dispositivo real e só tivemos acesso a um emulador (usuário iOS =/ )
-
 ![alt text](screens/androidDevMetricsELeakCanary/devMetrics1ErroTracingEmulator.png "AndroidDevMetrics - Erro Emulador")
-![alt text](screens/androidDevMetricsELeakCanary/devMetricsEpisodeDetails.png "AndroidDevMetrics - EpisodeDetails")
+
+
+Por último, destacamos com o profiler a funcionalidade de baixar um podcast da rede. Detalharemos mais no arqvuivo *bandwidth.md*
+
+![alt text](screens/androidDevMetricsELeakCanary/inicioBaixarPodcast.png "Baixando - Início")
+![alt text](screens/androidDevMetricsELeakCanary/finalBaixarPodcast.png "Baixando - Final")
+
+
+
